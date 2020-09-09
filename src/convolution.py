@@ -61,7 +61,10 @@ class Convolution:
     '''
     result = np.zeros((self.image.shape))
 
+    print("filters", self.filters)
+
     for curr_region, i, j in self.extract():
+      print("curegion", curr_region)
       curr_result = curr_region * self.filters
       result[i, j] = np.sum(curr_result)
 
