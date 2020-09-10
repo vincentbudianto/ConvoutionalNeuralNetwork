@@ -1,7 +1,7 @@
 import numpy as np
 
 class Convolution:
-  def __init__(self, image = None, inputSize = 1, paddingSize = 0, filterCount = 1, filterSize = 3, strideSize = 1):
+  def __init__(self, image = None, inputSize = 1, paddingSize = 0, filterCount = 1, filterSize = 3, strideSize = 0):
     self.image = image
     self.inputSize = inputSize
     self.paddingSize = paddingSize
@@ -48,8 +48,8 @@ class Convolution:
     '''
     h, w = self.image.shape
 
-    for i in range(h - (self.inputSize - self.paddingSize)):
-      for j in range(w - (self.inputSize - self.paddingSize)):
+    for i in range(0, (h - (self.inputSize - self.paddingSize) - self.strideSize), (1 + self.strideSize)):
+      for j in range(0, (w - (self.inputSize - self.paddingSize) - self.strideSize), (1 + self.strideSize)):
         region = self.image[i:(i + self.inputSize + self.paddingSize), j:(j + self.inputSize + self.paddingSize)]
 
         yield region, i, j
@@ -62,8 +62,8 @@ class Convolution:
     result = np.zeros((self.image.shape))
 
     for curr_region, i, j in self.extract():
-      curr_result = curr_region * self.filters
-      result[i, j] = np.sum(curr_result)
+        curr_result = curr_region * self.filters
+        result[i, j] = np.sum(curr_result)
 
     output = result[np.uint16(self.filterSize / 2):result.shape[0] - np.uint16(self.filterSize / 2), np.uint16(self.filterSize / 2):result.shape[1] - np.uint16(self.filterSize / 2)]
 
