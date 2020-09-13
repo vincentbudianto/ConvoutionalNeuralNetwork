@@ -1,6 +1,5 @@
 import numpy as np
 
-
 class Detector:
     def __init__(self, input = None, activation_function="relu", leaky_slope = 0.5):
         self.input = input

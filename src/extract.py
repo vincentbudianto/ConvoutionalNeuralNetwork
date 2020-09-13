@@ -1,8 +1,11 @@
 from PIL import Image
 import numpy
 
-def extractImage(imgname):
+def extractImage(imgname, resize = False, resizeWidth = 1000, resizeLength = 1000):
     im = Image.open(imgname)
+    if resize:
+        newsize = (resizeWidth, resizeLength)
+        im = im.resize(newsize)
     original_width, original_height = im.size
 
     if im.mode == "RGBA":
@@ -25,6 +28,6 @@ def convertImage(image_file):
     np_image = []
     return new_image
 
-if __name__ == "__main__":
 
+if __name__ == "__main__":
     print(extractImage("testo.jpg"))

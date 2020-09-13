@@ -1,9 +1,5 @@
 import math
 
-#########################
-######## POOLING ########
-#########################
-
 # Pooling class
 class Pooling:
     ### CONSTRUCTOR ###
