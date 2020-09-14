@@ -1,8 +1,12 @@
 from PIL import Image
 import numpy
 
-def extractImage(imgname):
+def extractImage(imgname, resize = False, resize_width = 600, resize_length = 600):
     im = Image.open(imgname)
+    if resize:
+        newsize = (resize_width, resize_length)
+        im = im.resize(newsize)
+
     original_width, original_height = im.size
 
     if im.mode == "RGBA":
@@ -25,6 +29,31 @@ def convertImage(image_file):
     np_image = []
     return new_image
 
-if __name__ == "__main__":
+def createRGBMatrix(extracted_image):
+    result = []
 
+    resRed = []
+    resGreen = []
+    resBlue = []
+
+    for row in extracted_image:
+        resRedRow = []
+        resGreenRow = []
+        resBlueRow = []
+        for col in extracted_image[0]:
+            resRedRow.append(col[0])
+            resGreenRow.append(col[1])
+            resBlueRow.append(col[2])
+        resRed.append(resRedRow)
+        resGreen.append(resGreenRow)
+        resBlue.append(resBlueRow)
+    
+    result.append(resRed)
+    result.append(resGreen)
+    result.append(resBlue)
+
+    return result
+
+
+if __name__ == "__main__":
     print(extractImage("testo.jpg"))
