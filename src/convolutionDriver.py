@@ -4,6 +4,8 @@ import numpy as np
 
 # Defaults
 testMatrix = np.arange(25).reshape(5,5)
+
+# print((testMatrix.shape))
 print("Input")
 print(testMatrix)
 

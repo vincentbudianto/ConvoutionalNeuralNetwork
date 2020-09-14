@@ -1,14 +1,14 @@
 import numpy as np
 
 class Convolution:
-  def __init__(self, image = None, inputSize = 1, paddingSize = 0, filterCount = 1, filterSize = 3, strideSize = 1):
+  def __init__(self, image = None, paddingSize = 2, filterCount = 1, filterSizeH = 3, filterSizeW = 3, strideSize = 3):
     self.image = image
-    self.inputSize = inputSize
     self.paddingSize = paddingSize
     self.filterCount = filterCount
-    self.filterSize = filterSize
+    self.filterSizeH = filterSizeH
+    self.filterSizeW = filterSizeW
     self.strideSize = strideSize
-    self.filters = np.random.randn(filterCount, filterSize, filterSize) / (filterSize ^ 2)
+    self.filters = np.random.randn(filterCount, filterSizeH, filterSizeW) / (filterSizeH * filterSizeW)
 
   ### GETTER / SETTER ###
   def getImage(self):
@@ -32,39 +32,55 @@ class Convolution:
       self.filterCount = filterCount
 
   def getFilterSize(self):
-      return self.filterSize
-  def setFilterSize(self, filterSize):
-      self.filterSize = filterSize
+      return self.filterSizeH, self.filterSizeW
+  def setFilterSize(self, filterSizeH, filterSizeW):
+      self.filterSizeH = filterSizeH
+      self.filterSizeW = filterSizeW
 
   def getStride(self):
       return self.strideSize
   def setStride(self, strideSize):
       self.strideSize = strideSize
 
-  def extract(self):
+  def padding(self):
+    result = np.zeros((self.image.shape[0] + (self.paddingSize * 2), self.image.shape[1] + (self.paddingSize * 2)))
+
+    for i in range(self.paddingSize, (result.shape[0] - self.paddingSize)):
+        for j in range(self.paddingSize, (result.shape[1] - self.paddingSize)):
+            result[i, j] = self.image[i - self.paddingSize, j - self.paddingSize]
+
+    return result
+
+  def extract(self, padding):
     '''
     Generates all possible i x j image regions using padding.
     - image is a 2d numpy array.
     '''
-    h, w = self.image.shape
+    h, w = padding.shape
 
-    for i in range(0, (h - (self.inputSize - self.paddingSize) - self.strideSize), self.strideSize):
-      for j in range(0, (w - (self.inputSize - self.paddingSize) - self.strideSize), self.strideSize):
-        region = self.image[i:(i + self.inputSize + self.paddingSize), j:(j + self.inputSize + self.paddingSize)]
+    for i in range(0, (h - (self.filterSizeH - self.strideSize)), self.strideSize):
+        for j in range(0, (w - (self.filterSizeW - self.strideSize)), self.strideSize):
+            region = padding[i:(i + self.filterSizeH), j:(j + self.filterSizeW)]
 
-        yield region, i, j
+            yield region, i, j
 
   def forward(self):
     '''
     Performs a forward pass of the conv layer using the given input.
-    Returns a 3d numpy array with dimensions (h, w, filterCount).
+    Returns a 3d numpy array with dimensions (h, w).
     '''
-    result = np.zeros((self.image.shape))
+    padding = self.padding()
+    print('padding\n', padding)
 
-    for curr_region, i, j in self.extract():
+    result = np.zeros(padding.shape)
+
+    print('filters :\n', self.filters)
+
+    for curr_region, i, j in self.extract(padding):
         curr_result = curr_region * self.filters
         result[i, j] = np.sum(curr_result)
+        print(i, j, ':', np.sum(curr_result))
 
-    output = result[np.uint16(self.filterSize / 2):result.shape[0] - np.uint16(self.filterSize / 2), np.uint16(self.filterSize / 2):result.shape[1] - np.uint16(self.filterSize / 2)]
+    output = result[0:result.shape[0] - np.uint16(self.filterSizeH - 1):self.strideSize, 0:result.shape[1] - np.uint16(self.filterSizeW - 1):self.strideSize]
 
     return output
