@@ -18,7 +18,8 @@ class ConvolutionLayer:
     pooling: Object
         Pooling process that minimizies the output to a desirable size
     """
-    def __init__(self, convolution, detector, pooling, inputs = [], outputs = []):
+
+    def __init__(self, convolution, detector, pooling, inputs=[], outputs=[]):
         self.__inputs = inputs
         self.__outputs = outputs
         self.__convolution = convolution
@@ -30,43 +31,51 @@ class ConvolutionLayer:
             self.detector = Detector()
         if self.pooling == None:
             self.pooling = Pooling()
-    
+
     """
     Getter setter untuk setiap atribut
     """
+
     def setInputs(inputs):
         self.__inputs = inputs
+
     def addInputs(newInput):
         self.__inputs.append(newInput)
+
     def getInputs():
         return self.__inputs
 
     def setOutputs(outputs):
         self.__outputs = outputs
+
     def addOutputs(newOutput):
         self.__outputs.append(newOutput)
+
     def getOutputs():
         return self.__outputs
-    
+
     def setConvolution(convolution):
         self.__convolution = convolution
+
     def getConvolution():
         return self.__convolution
 
     def setDetector(detector):
         self.__detector = detector
+
     def getDetector():
         return self.__detector
-    
+
     def setPooling(pooling):
         self.__pooling = pooling
+
     def getPooling():
         return self.__pooling
-    
+
     """
-    Process image and sends out output
+    Process the input matrix and sends out output
     """
-
-
-
+    def executeConvolutionLayer():
+        print("test")
         
+
