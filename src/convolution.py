@@ -8,7 +8,7 @@ class Convolution:
     self.filterSizeH = filterSizeH
     self.filterSizeW = filterSizeW
     self.strideSize = strideSize
-    if filters == None:
+    if filters is None:
         self.filters = np.random.randn(filterCount, filterSizeH, filterSizeW) / (filterSizeH * filterSizeW)
     else:
         self.filters = filters
@@ -73,16 +73,16 @@ class Convolution:
     Returns a 3d numpy array with dimensions (h, w).
     '''
     padding = self.padding()
-    print('padding\n', padding)
+    # print('padding\n', padding)
 
     result = np.zeros(padding.shape)
 
-    print('filters :\n', self.filters)
+    # print('filters :\n', self.filters)
 
     for curr_region, i, j in self.extract(padding):
         curr_result = curr_region * self.filters
         result[i, j] = np.sum(curr_result)
-        print(i, j, ':', np.sum(curr_result))
+        # print(i, j, ':', np.sum(curr_result))
 
     output = result[0:result.shape[0] - np.uint16(self.filterSizeH - 1):self.strideSize, 0:result.shape[1] - np.uint16(self.filterSizeW - 1):self.strideSize]
 
