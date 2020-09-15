@@ -9,7 +9,7 @@ class Pooling:
     ### CONSTRUCTOR ###
     # FilterSize = 2; Stride = 1; Mode = 'max'
     # 2 modes: "MAX", "AVG"
-    def __init__(self, filterSize = 2, stride = 1, mode = 'MAX'):
+    def __init__(self, filterSize = 2, stride = 1, mode = "MAX"):
         self.__filterSize = filterSize
         self.__stride = stride
         self.__mode = mode
@@ -70,9 +70,9 @@ class Pooling:
             while (startPosition[1] + self.__filterSize) <= len(inputMatrix[0]):
                 partitioned = self.__partitionInput(inputMatrix, startPosition)
                 resultCell = None
-                if (self.__mode == 'MAX'):
+                if (self.__mode == "MAX"):
                     resultCell = self.__maximizeFiltered(partitioned)
-                elif (self.__mode == 'AVG'):
+                elif (self.__mode == "AVG"):
                     resultCell = self.__averageFiltered(partitioned)
                 resultRow.append(resultCell)
                 startPosition[1] += self.__stride

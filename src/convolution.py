@@ -1,14 +1,17 @@
 import numpy as np
 
 class Convolution:
-  def __init__(self, image = None, paddingSize = 2, filterCount = 1, filterSizeH = 3, filterSizeW = 3, strideSize = 3):
+  def __init__(self, image = None, paddingSize = 2, filterCount = 1, filterSizeH = 3, filterSizeW = 3, strideSize = 3, filters = None):
     self.image = image
     self.paddingSize = paddingSize
     self.filterCount = filterCount
     self.filterSizeH = filterSizeH
     self.filterSizeW = filterSizeW
     self.strideSize = strideSize
-    self.filters = np.random.randn(filterCount, filterSizeH, filterSizeW) / (filterSizeH * filterSizeW)
+    if filters == None:
+        self.filters = np.random.randn(filterCount, filterSizeH, filterSizeW) / (filterSizeH * filterSizeW)
+    else:
+        self.filters = filters
 
   ### GETTER / SETTER ###
   def getImage(self):
