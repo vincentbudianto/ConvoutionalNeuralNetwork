@@ -70,38 +70,42 @@ class ConvolutionLayer:
     
     """
     Convolutional layer configurations
-    - 6 convolutions
-    - 2 detectors
-    - 2 poolings
+    - 3 convolutions
+    - 3 detectors
+    - 3 poolings
     """
-    def setConfigurationDefault(self):
+    def setConfigurationDefault(self, kernelSize):
         # Convolution
         convolutionList = []
-        for i in range(1, 7):
-            kernel = np.arange(i, 25 * i + 1, i).reshape(5,5)
-            convolutionList.append(Convolution(None, 1, 1, 5, 5, 1, kernel))
+        for i in range(1, 4):
+            kernel = np.arange(i, kernelSize * kernelSize * i + 1, i).reshape(kernelSize,kernelSize)
+            convolutionList.append(Convolution(None, paddingSize = 5, filterCount = 1, filterSizeH = kernelSize, filterSizeW = kernelSize, strideSize = 5, filters = kernel))
         self.convolution = convolutionList
 
         # Detector
         detectorList = []
         detectorList.append(Detector(None, "relu"))
-        detectorList.append(Detector(None, "sigmoid"))
+        detectorList.append(Detector(None, "relu"))
+        detectorList.append(Detector(None, "relu"))
+        #detectorList.append(Detector(None, "sigmoid"))
         self.detector = detectorList
 
         # Pooling
         poolingList = []
         poolingList.append(Pooling(2, 2, 2, "MAX"))
-        poolingList.append(Pooling(3, 3, 1, "AVG"))
+        poolingList.append(Pooling(2, 2, 2, "MAX"))
+        poolingList.append(Pooling(2, 2, 2, "MAX"))
+        #poolingList.append(Pooling(3, 3, 1, "AVG"))
         self.pooling = poolingList
 
         # Input Mapper
-        inputMapper = np.array([[1, 0, 0, 1, 0, 0], [0, 1, 0, 0, 1, 0], [0, 0, 1, 0, 0, 1]])
+        inputMapper = np.array([[1, 0, 0], [0, 1, 0], [0, 0, 1]])
         h, w = inputMapper.shape
         inputMapper = ConnectionMapper(h, w, inputMapper)
         self.inputMapper = inputMapper
 
         # Connection Mapper
-        connectionMapper = np.array([[1, 0], [0, 1], [1, 0], [0, 1], [1, 0], [0, 1]])
+        connectionMapper = np.array([[1, 0, 0], [0, 1, 0], [0, 0, 1]])
         h, w = connectionMapper.shape
         connectionMapper = ConnectionMapper(h, w, connectionMapper)
         self.connectionMapper = connectionMapper
@@ -121,7 +125,7 @@ class ConvolutionLayer:
         for i in range(len(self.convolution)):
             convolutionResult.append(self.convolution[i].forward())
 
-        print(convolutionResult)
+        #print("CONVOLUTION RESULT:\n", convolutionResult)
         
         # Detection
         detectionResult = []
@@ -135,7 +139,7 @@ class ConvolutionLayer:
                     detection += convolutionResult[j]
             detectionResult.append(self.detector[i].forward_activation(detection))
         
-        print(detectionResult)
+        #print("DETECTION RESULT:\n",detectionResult)
 
         # Pooling
         result = []
@@ -145,7 +149,10 @@ class ConvolutionLayer:
         self.outputs = result
         self.outputSize = len(result)
         
-        print(result)
+        #print("RESULT:\n", result)
+        #print("SHAPE:\n",result[0].shape)
+
+
 
 
 

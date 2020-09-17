@@ -36,7 +36,7 @@ def createRGBMatrix(extracted_image):
     resGreen = []
     resBlue = []
 
-    for row in extracted_image:
+    for _ in extracted_image:
         resRedRow = []
         resGreenRow = []
         resBlueRow = []

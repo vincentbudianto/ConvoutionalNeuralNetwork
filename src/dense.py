@@ -1,21 +1,22 @@
 import numpy as np
 
 class Dense:
-    def __init__(self, sigma = None, activation_function="relu", leaky_slope = 0.5):
-        self.sigma = sigma
+    def __init__(self, weightmatrix, activation_function="relu", leaky_slope = 0.5, bias = 0):
+        self.sigma = None
+        self.bias = bias
         self.activation_function = activation_function
         self.leaky_slope = leaky_slope
+        self.weightmatrix = weightmatrix
+
+    def calculateSigma(self, inputArray, inputNode):
+        if isinstance(inputArray, list):
+            sigmaArray = self.weightmatrix[inputNode] * inputArray
+        else:
+            sigmaArray = self.weightmatrix[inputNode] * inputArray.flatten()
+        self.sigma = np.sum(sigmaArray) + self.bias
 
     def activate(self):
-        h, w = self.sigma.shape
-
-        result = np.zeros((self.sigma.shape))
-
-        for i in range(0, h):
-            for j in range(0, w):
-                result[i][j] = self.forward_activation(self.sigma[i][j]) 
-
-        return result              
+        return self.forward_activation(self.sigma) 
 
     ###ACTIVATION FUNCTIONS###
     def forward_activation(self, X):     
@@ -28,6 +29,6 @@ class Dense:
         elif self.activation_function == "leaky_relu":      
             return np.maximum(self.leaky_slope*X,X)
 
-    def get_output(self, inputarray):
-        self.sigma = input
+    def get_output(self, inputArray, inputNode):
+        self.calculateSigma(inputArray, inputNode)
         return self.activate()
