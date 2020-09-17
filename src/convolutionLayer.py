@@ -35,7 +35,7 @@ class ConvolutionLayer:
         self.poolingSize = len(pooling)
         self.inputMapper = inputMapper
         self.connectionMapper = connectionMapper
-    
+
     """
     Getter setter untuk setiap atribut
     """
@@ -67,7 +67,7 @@ class ConvolutionLayer:
         self.pooling = pooling
     def getPooling(self):
         return self.pooling
-    
+
     """
     Convolutional layer configurations
     - 3 convolutions
@@ -126,7 +126,7 @@ class ConvolutionLayer:
             convolutionResult.append(self.convolution[i].forward())
 
         #print("CONVOLUTION RESULT:\n", convolutionResult)
-        
+
         # Detection
         detectionResult = []
         for i in range(self.connectionMapper.getNextNodeCount()):
@@ -137,18 +137,21 @@ class ConvolutionLayer:
                     if len(detection) == 0:
                         detection = np.zeros(convolutionResult[j].shape)
                     detection += convolutionResult[j]
+            if (self.detector[i].getBias() == None):
+                self.detector[i].setBias(detection)
+                print('set bias')
             detectionResult.append(self.detector[i].forward_activation(detection))
-        
+
         #print("DETECTION RESULT:\n",detectionResult)
 
         # Pooling
         result = []
         for i in range(len(detectionResult)):
             result.append(np.array(self.pooling[i].pool(detectionResult[i])))
-        
+
         self.outputs = result
         self.outputSize = len(result)
-        
+
         #print("RESULT:\n", result)
         #print("SHAPE:\n",result[0].shape)
 
