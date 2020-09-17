@@ -90,8 +90,8 @@ class ConvolutionLayer:
 
         # Pooling
         poolingList = []
-        poolingList.append(Pooling(2, 2, "MAX"))
-        poolingList.append(Pooling(3, 1, "AVG"))
+        poolingList.append(Pooling(2, 2, 2, "MAX"))
+        poolingList.append(Pooling(3, 3, 1, "AVG"))
         self.pooling = poolingList
 
         # Input Mapper
