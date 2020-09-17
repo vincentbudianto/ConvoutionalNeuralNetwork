@@ -1,14 +1,17 @@
 import numpy as np
 
 class Convolution:
-  def __init__(self, image = None, paddingSize = 2, filterCount = 1, filterSizeH = 3, filterSizeW = 3, strideSize = 3):
+  def __init__(self, image = None, paddingSize = 2, filterCount = 1, filterSizeH = 3, filterSizeW = 3, strideSize = 3, filters = None):
     self.image = image
     self.paddingSize = paddingSize
     self.filterCount = filterCount
     self.filterSizeH = filterSizeH
     self.filterSizeW = filterSizeW
     self.strideSize = strideSize
-    self.filters = np.random.randn(filterCount, filterSizeH, filterSizeW) / (filterSizeH * filterSizeW)
+    if filters is None:
+        self.filters = np.random.randn(filterCount, filterSizeH, filterSizeW) / (filterSizeH * filterSizeW)
+    else:
+        self.filters = filters
 
   ### GETTER / SETTER ###
   def getImage(self):
@@ -70,16 +73,16 @@ class Convolution:
     Returns a 3d numpy array with dimensions (h, w).
     '''
     padding = self.padding()
-    print('padding\n', padding)
+    # print('padding\n', padding)
 
     result = np.zeros(padding.shape)
 
-    print('filters :\n', self.filters)
+    # print('filters :\n', self.filters)
 
     for curr_region, i, j in self.extract(padding):
         curr_result = curr_region * self.filters
         result[i, j] = np.sum(curr_result)
-        print(i, j, ':', np.sum(curr_result))
+        # print(i, j, ':', np.sum(curr_result))
 
     output = result[0:result.shape[0] - np.uint16(self.filterSizeH - 1):self.strideSize, 0:result.shape[1] - np.uint16(self.filterSizeW - 1):self.strideSize]
 
