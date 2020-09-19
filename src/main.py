@@ -6,7 +6,7 @@ import numpy as np
 
 def test(convInputSize, convFilterCount, convFilterSize, convPaddingSize, convStrideSize, poolFilterSize, poolStrideSize, poolMode):
     # np.set_printoptions(threshold=np.inf)
-    extractedImage = extractImage("hololive29.jpg", False, convInputSize, convInputSize)
+    extractedImage = extractImage("hololive29.jpg", True, convInputSize, convInputSize)
 
     convolutionLayer = ConvolutionLayer()
     convolutionLayer.setConfigurationDefault(convFilterCount, convFilterSize, convPaddingSize, convStrideSize, poolFilterSize, poolStrideSize, poolMode)
@@ -29,5 +29,5 @@ def test(convInputSize, convFilterCount, convFilterSize, convPaddingSize, convSt
     denseLayer.executeDenseLayer(flatArray)
 
 if __name__ == '__main__':
-    test(200, 1, 5, 2, 1, 3, 1, 'AVG')
+    test(200, 2, 3, 2, 1, 3, 1, 'AVG')
     

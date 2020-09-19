@@ -12,9 +12,9 @@ class Detector:
 
         result = np.zeros((self.input.shape))
 
-        for i in range(0, h):
-            for j in range(0, w):
-                result[i][j] = self.forward_activation(self.input[i][j])
+        for i in range(h):
+            for j in range(w):
+                result[i][j] = self.forward_activation(self.input[i][j] + self.bias[i][j])
 
         return result
 
@@ -26,7 +26,6 @@ class Detector:
 
     ###ACTIVATION FUNCTIONS###
     def forward_activation(self, X):
-        X += self.bias
         if self.activation_function == "sigmoid":
             return 1.0/(1.0 + np.exp(-X))
         elif self.activation_function == "tanh":

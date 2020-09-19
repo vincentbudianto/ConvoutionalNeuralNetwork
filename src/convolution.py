@@ -12,7 +12,7 @@ class Convolution:
     
     if filters is None and image is not None:
         h, w, t = image.shape
-        self.filters = np.random.randn(t, self.filterSizeH, self.filterSizeW) / (self.filterSizeH * self.filterSizeW)
+        self.filters = np.array([[[-1, 0, 1], [-2, 0, 2], [-1, 0, 1]],[[-1, 0, 1], [-2, 0, 2], [-1, 0, 1]],[[-1, 0, 1], [-2, 0, 2], [-1, 0, 1]]])
     else:
         self.filters = filters
 
@@ -23,8 +23,7 @@ class Convolution:
       self.image = image
       if image is not None:
         h, w, t = image.shape
-        self.filters = np.random.randn(t, self.filterSizeH, self.filterSizeW) / (self.filterSizeH * self.filterSizeW)
-
+        self.filters = np.array([[[-1, 0, 1], [-2, 0, 2], [-1, 0, 1]],[[-1, 0, 1], [-2, 0, 2], [-1, 0, 1]],[[-1, 0, 1], [-2, 0, 2], [-1, 0, 1]]])
   def getPadding(self):
       return self.paddingSize
   def setPadding(self, paddingSize):

@@ -105,13 +105,14 @@ class ConvolutionLayer:
             # Convolution
             self.convolution[i].setImage(np.copy(self.inputs))
             convolutionResult = self.convolution[i].forward()
-            cv2.imwrite("convo.jpg", convolutionResult)
+            outputName = "convo" + str(i) + ".jpg"
+            cv2.imwrite(outputName, convolutionResult)
 
             # Detection
             if (self.detector[i].getBias() == None):
                 self.detector[i].setBias(convolutionResult)
             self.detector[i].input = convolutionResult
-            detectionResult = self.detector[i].activation()
+            detectionResult = self.detector[i].activate()
 
             # Pooling
             poolingResult = np.array(self.pooling[i].pool(detectionResult))
