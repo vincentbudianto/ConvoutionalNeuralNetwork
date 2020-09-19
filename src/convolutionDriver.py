@@ -1,16 +1,13 @@
 # Just driver for convolution
+from extract import extractImage
 from convolution import Convolution
 import numpy as np
 
-# Defaults
-testMatrix = np.arange(25).reshape(5,5)
 
-# print((testMatrix.shape))
-print("Input")
-print(testMatrix)
-
-conv = Convolution()
-conv.setImage(testMatrix)
+extractedImage = extractImage("hololive29.jpg", True, 200, 200)
+extractedImage = np.array(extractedImage[0])
+# print(extractedImage)
+conv = Convolution(np.array(extractedImage))
 
 result = conv.forward()
 print("\nResult")

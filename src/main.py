@@ -4,19 +4,18 @@ from denseLayer import DenseLayer
 from flatten import FlatteningLayer
 import numpy as np
 
-def test():
+def test(convInputSize, convFilterCount, convFilterSize, convPaddingSize, convStrideSize, poolFilterSize, poolStrideSize, poolMode):
     # np.set_printoptions(threshold=np.inf)
-    extractedImage = extractImage("test.png", True, 200, 200)
-
-    print(np.array(extractedImage[0]).shape)
-
-    print("Extraction clear")
+    extractedImage = extractImage("hololive29.jpg", False, convInputSize, convInputSize)
 
     convolutionLayer = ConvolutionLayer()
-    convolutionLayer.setConfigurationDefault(3)
+    convolutionLayer.setConfigurationDefault(convFilterCount, convFilterSize, convPaddingSize, convStrideSize, poolFilterSize, poolStrideSize, poolMode)
     convolutionLayer.setInputs(np.array(extractedImage[0]))
 
     convolutionLayer.executeConvolutionLayer()
+
+    print("CONVOLUTION DONE")
+    print(convolutionLayer.outputs.shape)
 
     flatteningLayer = FlatteningLayer()
 
@@ -30,5 +29,5 @@ def test():
     denseLayer.executeDenseLayer(flatArray)
 
 if __name__ == '__main__':
-    test()
+    test(200, 1, 5, 2, 1, 3, 1, 'AVG')
     

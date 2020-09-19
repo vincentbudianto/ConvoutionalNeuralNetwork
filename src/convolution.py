@@ -1,15 +1,18 @@
 import numpy as np
 
 class Convolution:
-  def __init__(self, image = None, paddingSize = 2, filterCount = 1, filterSizeH = 3, filterSizeW = 3, strideSize = 3, filters = None):
-    self.image = image
+  def __init__(self, image = None, paddingSize = 2, filterSizeH = 3, filterSizeW = 3, strideSize = 1, filters = None):
     self.paddingSize = paddingSize
-    self.filterCount = filterCount
+    self.strideSize = strideSize
     self.filterSizeH = filterSizeH
     self.filterSizeW = filterSizeW
-    self.strideSize = strideSize
-    if filters is None:
-        self.filters = np.random.randn(filterCount, filterSizeH, filterSizeW) / (filterSizeH * filterSizeW)
+
+    if image is not None:
+        self.image = np.transpose(image,(2, 0, 1))
+    
+    if filters is None and image is not None:
+        h, w, t = image.shape
+        self.filters = np.random.randn(t, self.filterSizeH, self.filterSizeW) / (self.filterSizeH * self.filterSizeW)
     else:
         self.filters = filters
 
@@ -18,21 +21,14 @@ class Convolution:
       return self.image
   def setImage(self, image):
       self.image = image
-
-  def getInputSize(self):
-      return self.inputSize
-  def setInputSize(self, inputSize):
-      self.inputSize = inputSize
+      if image is not None:
+        h, w, t = image.shape
+        self.filters = np.random.randn(t, self.filterSizeH, self.filterSizeW) / (self.filterSizeH * self.filterSizeW)
 
   def getPadding(self):
       return self.paddingSize
   def setPadding(self, paddingSize):
       self.paddingSize = paddingSize
-
-  def getFilterCount(self):
-      return self.filterCount
-  def setFilterCount(self, filterCount):
-      self.filterCount = filterCount
 
   def getFilterSize(self):
       return self.filterSizeH, self.filterSizeW
@@ -46,12 +42,16 @@ class Convolution:
       self.strideSize = strideSize
 
   def padding(self):
-    result = np.zeros((self.image.shape[0] + (self.paddingSize * 2), self.image.shape[1] + (self.paddingSize * 2)))
+    result = []
+    for imageLayer in self.image:
+        tempResult = np.zeros((imageLayer.shape[0] + (self.paddingSize * 2), imageLayer.shape[1] + (self.paddingSize * 2)))
 
-    for i in range(self.paddingSize, (result.shape[0] - self.paddingSize)):
-        for j in range(self.paddingSize, (result.shape[1] - self.paddingSize)):
-            result[i, j] = self.image[i - self.paddingSize, j - self.paddingSize]
+        for i in range(self.paddingSize, (tempResult.shape[0] - self.paddingSize)):
+            for j in range(self.paddingSize, (tempResult.shape[1] - self.paddingSize)):
+                tempResult[i, j] = imageLayer[i - self.paddingSize, j - self.paddingSize]
+        result.append(tempResult)
 
+    result = np.array(result)
     return result
 
   def extract(self, padding):
@@ -73,17 +73,24 @@ class Convolution:
     Returns a 3d numpy array with dimensions (h, w).
     '''
     padding = self.padding()
-    # print('padding\n', padding)
 
-    result = np.zeros(padding.shape)
+    totalResult = None
 
-    # print('filters :\n', self.filters)
+    for k in range(len(padding)):
+        paddingLayer = padding[k]
+        result = np.zeros(paddingLayer.shape)
+        for curr_region, i, j in self.extract(paddingLayer):
+            curr_result = np.tensordot(curr_region, self.filters[k])
+            result[i, j] = np.sum(curr_result)
+            #print(i, j, ':',"CURREGION : \n", curr_region, "FILTER :\n", self.filters, np.sum(curr_result))
 
-    for curr_region, i, j in self.extract(padding):
-        curr_result = np.tensordot(curr_region, self.filters)
-        result[i, j] = np.sum(curr_result)
-        #print(i, j, ':',"CURREGION : \n", curr_region, "FILTER :\n", self.filters, np.sum(curr_result))
+        output = result[0:result.shape[0] - np.uint16(self.filterSizeH - 1):self.strideSize, 0:result.shape[1] - np.uint16(self.filterSizeW - 1):self.strideSize]
 
-    output = result[0:result.shape[0] - np.uint16(self.filterSizeH - 1):self.strideSize, 0:result.shape[1] - np.uint16(self.filterSizeW - 1):self.strideSize]
+        if totalResult is None:
+            totalResult = output
+        else:
+            totalResult += output
+    
+    print(totalResult)
 
-    return output
+    return totalResult

@@ -74,92 +74,52 @@ class ConvolutionLayer:
     - 3 detectors
     - 3 poolings
     """
-    def setConfigurationDefault(self, kernelSize):
+    def setConfigurationDefault(self, convFilterCount, convFilterSize, convPaddingSize, convStrideSize, poolFilterSize, poolStrideSize, poolMode):
         # Convolution
         convolutionList = []
-        for i in range(1, 4):
-            kernel = np.arange(i, kernelSize * kernelSize * i + 1, i).reshape(kernelSize,kernelSize)
-            # kernel = np.array([[-1, 0, 1], [-2, 0, 2], [-1, 0, 1]])
-            convolutionList.append(Convolution(None, paddingSize = 0, filterCount = 1, filterSizeH = kernelSize, filterSizeW = kernelSize, strideSize = 1, filters = kernel))
+        for i in range(convFilterCount):
+            dummyFilter = np.array([[[-1, 0, 1], [-2, 0, 2], [-1, 0, 1]],[[-1, 0, 1], [-2, 0, 2], [-1, 0, 1]],[[-1, 0, 1], [-2, 0, 2], [-1, 0, 1]]])
+            convolutionList.append(Convolution(None, convPaddingSize, convFilterSize, convFilterSize, convStrideSize, filters = dummyFilter))
         self.convolution = convolutionList
 
         # Detector
         detectorList = []
-        detectorList.append(Detector(None, "relu"))
-        detectorList.append(Detector(None, "relu"))
-        detectorList.append(Detector(None, "relu"))
+        for i in range(convFilterCount):
+            detectorList.append(Detector(None, "relu"))
         self.detector = detectorList
 
         # Pooling
         poolingList = []
-        poolingList.append(Pooling(2, 2, 2, "AVG"))
-        poolingList.append(Pooling(2, 2, 2, "AVG"))
-        poolingList.append(Pooling(2, 2, 2, "AVG"))
+        for i in range(convFilterCount):
+            poolingList.append(Pooling(poolFilterSize, poolFilterSize, poolStrideSize, poolMode))
         self.pooling = poolingList
-
-        # Input Mapper
-        inputMapper = np.array([[1, 0, 0], [0, 1, 0], [0, 0, 1]])
-        h, w = inputMapper.shape
-        inputMapper = ConnectionMapper(h, w, inputMapper)
-        self.inputMapper = inputMapper
-
-        # Connection Mapper
-        connectionMapper = np.array([[1, 0, 0], [0, 1, 0], [0, 0, 1]])
-        h, w = connectionMapper.shape
-        connectionMapper = ConnectionMapper(h, w, connectionMapper)
-        self.connectionMapper = connectionMapper
 
  
     """
     Process the input matrix and sends out output
     """
     def executeConvolutionLayer(self):
-        # Convolution
-        convolutionResult = []
-        self.inputs = np.transpose(self.inputs,(2, 0, 1))
-        for i in range(len(self.inputs)):
-            targetedConvolution = self.inputMapper.getConnectionFromPreviousNode(i)
-            for j in range(len(targetedConvolution)):
-                if targetedConvolution[j] == 1:
-                    self.convolution[j].setImage(np.copy(self.inputs[i]))
-        for i in range(len(self.convolution)):
-            convolutionResult.append(self.convolution[i].forward())
-        
-        cv2.imwrite("convo.jpg", np.transpose(convolutionResult,(1, 2, 0)))
-
-        # print("CONVOLUTION RESULT:\n", convolutionResult)
-
-        # Detection
-        detectionResult = []
-        for i in range(self.connectionMapper.getNextNodeCount()):
-            targetedDetection = self.connectionMapper.getConnectionFromNextNode(i)
-            detection = []
-            for j in range(len(convolutionResult)):
-                if targetedDetection[j] == 1:
-                    if len(detection) == 0:
-                        detection = np.zeros(convolutionResult[j].shape)
-                    detection += convolutionResult[j]
-            if (self.detector[i].getBias() == None):
-                self.detector[i].setBias(detection)
-                # print('set bias')
-            detectionResult.append(self.detector[i].forward_activation(detection))
-
-        #print("DETECTION RESULT:\n",detectionResult)
-
-        # Pooling
         result = []
-        for i in range(len(detectionResult)):
-            result.append(np.array(self.pooling[i].pool(detectionResult[i])))
+        self.inputs = np.transpose(self.inputs,(2, 0, 1))
+        for i in range(len(self.convolution)):
+            # Convolution
+            self.convolution[i].setImage(np.copy(self.inputs))
+            convolutionResult = self.convolution[i].forward()
+            cv2.imwrite("convo.jpg", convolutionResult)
+
+            # Detection
+            if (self.detector[i].getBias() == None):
+                self.detector[i].setBias(convolutionResult)
+            self.detector[i].input = convolutionResult
+            detectionResult = self.detector[i].activation()
+
+            # Pooling
+            poolingResult = np.array(self.pooling[i].pool(detectionResult))
+            
+            result.append(poolingResult)
         
         self.outputs = np.array(result)
-        self.outputSize = len(np.array(result))
-        
-        self.outputs = np.transpose(self.outputs,(1, 2, 0))
-
-        cv2.imwrite("finalconvo.jpg", self.outputs)
-
-        # print("RESULT:\n", self.outputs)
-        # print("SHAPE:\n", self.outputs.shape)
+        print(self.outputs)
 
 
 
