@@ -9,9 +9,11 @@ class Dense:
         self.weightarray = weightarray
 
     def calculateSigma(self, inputArray):
-        print("WEIGHTARRAY", self.weightarray.shape)
-        print("INPUTARRAY", inputArray.shape)
-        sigmaArray = np.tensordot(self.weightarray, inputArray)
+        # print("WEIGHTARRAY", self.weightarray.shape)
+        # # print("WEIGHTARRAY", self.weightarray)
+        # print("INPUTARRAY", inputArray.shape)
+        # # print("INPUTARRAY", inputArray)
+        sigmaArray = np.tensordot(self.weightarray, inputArray, (0,0))
         self.sigma = np.sum(sigmaArray) + self.bias
 
     def activate(self):

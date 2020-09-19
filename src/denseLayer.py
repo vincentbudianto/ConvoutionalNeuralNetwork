@@ -7,22 +7,26 @@ class DenseLayer:
         self.flatlength = flatlength
         self.denseNodes = []
         self.nodeCount = nodeCount
-        self.outputNode = Dense( np.random.randn(self.nodeCount, 1, 1) * 10, activation_function = "sigmoid")
+        self.outputs = None
+        self.outputNode = Dense( np.random.randn(self.nodeCount, 1, 1) * 10, activation_function = "relu")
 
     def initiateLayer(self):
         for _ in range(self.nodeCount):
             
-            currentNodeWeightMatrix = np.random.randn(1, self.flatlength) * 10
+            currentNodeWeightMatrix = np.random.randn(self.flatlength) * 10
             current_node = Dense(currentNodeWeightMatrix)
             self.denseNodes.append(current_node)
 
     def executeDenseLayer(self, flatArray):
-        outputArray = []
+        outputArray = np.array([])
         self.flatArray = flatArray
         for currentNode in self.denseNodes:
-            outputArray.append(currentNode.get_output(flatArray))
+            outputArray = np.append(outputArray, currentNode.get_output(flatArray))
+
+            
+        self.outputs = self.outputNode.get_output(outputArray)
         
-        print(self.outputNode.get_output(outputArray))
+        print(self.outputs)
         
 
 

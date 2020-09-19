@@ -35,7 +35,7 @@ class ConvolutionLayer:
         self.poolingSize = len(pooling)
         self.inputMapper = inputMapper
         self.connectionMapper = connectionMapper
-    
+
     """
     Getter setter untuk setiap atribut
     """
@@ -67,7 +67,7 @@ class ConvolutionLayer:
         self.pooling = pooling
     def getPooling(self):
         return self.pooling
-    
+
     """
     Convolutional layer configurations
     - 3 convolutions
@@ -127,7 +127,9 @@ class ConvolutionLayer:
         for i in range(len(self.convolution)):
             convolutionResult.append(self.convolution[i].forward())
         
-        # cv2.imwrite("pepege.jpg", np.transpose(convolutionResult,(1, 2, 0)))
+        # cv2.imwrite("convo.jpg", np.transpose(convolutionResult,(1, 2, 0)))
+
+        # print("CONVOLUTION RESULT:\n", convolutionResult)
 
         # Detection
         detectionResult = []
@@ -139,8 +141,11 @@ class ConvolutionLayer:
                     if len(detection) == 0:
                         detection = np.zeros(convolutionResult[j].shape)
                     detection += convolutionResult[j]
+            if (self.detector[i].getBias() == None):
+                self.detector[i].setBias(detection)
+                # print('set bias')
             detectionResult.append(self.detector[i].forward_activation(detection))
-        
+
         #print("DETECTION RESULT:\n",detectionResult)
 
         # Pooling
@@ -153,7 +158,7 @@ class ConvolutionLayer:
         
         self.outputs = np.transpose(self.outputs,(1, 2, 0))
 
-        # cv2.imwrite("pepeg.jpg", self.outputs)
+        # cv2.imwrite("finalconvo.jpg", self.outputs)
 
         # print("RESULT:\n", self.outputs)
         # print("SHAPE:\n", self.outputs.shape)
