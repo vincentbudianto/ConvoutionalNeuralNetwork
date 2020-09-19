@@ -1,18 +1,17 @@
 import numpy as np
 
 class Dense:
-    def __init__(self, weightmatrix, activation_function="relu", leaky_slope = 0.5, bias = 0):
+    def __init__(self, weightarray, activation_function="relu", leaky_slope = 0.5, bias = 0):
         self.sigma = None
         self.bias = bias
         self.activation_function = activation_function
         self.leaky_slope = leaky_slope
-        self.weightmatrix = weightmatrix
+        self.weightarray = weightarray
 
-    def calculateSigma(self, inputArray, inputNode):
-        if isinstance(inputArray, list):
-            sigmaArray = self.weightmatrix[inputNode] * inputArray
-        else:
-            sigmaArray = self.weightmatrix[inputNode] * inputArray.flatten()
+    def calculateSigma(self, inputArray):
+        print("WEIGHTARRAY", self.weightarray.shape)
+        print("INPUTARRAY", inputArray.shape)
+        sigmaArray = np.tensordot(self.weightarray, inputArray)
         self.sigma = np.sum(sigmaArray) + self.bias
 
     def activate(self):
@@ -29,6 +28,6 @@ class Dense:
         elif self.activation_function == "leaky_relu":      
             return np.maximum(self.leaky_slope*X,X)
 
-    def get_output(self, inputArray, inputNode):
-        self.calculateSigma(inputArray, inputNode)
+    def get_output(self, inputArray):
+        self.calculateSigma(inputArray)
         return self.activate()

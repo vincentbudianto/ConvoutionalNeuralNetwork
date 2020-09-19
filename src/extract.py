@@ -29,31 +29,5 @@ def convertImage(image_file):
     np_image = []
     return new_image
 
-def createRGBMatrix(extracted_image):
-    result = []
-
-    resRed = []
-    resGreen = []
-    resBlue = []
-
-    for _ in extracted_image:
-        resRedRow = []
-        resGreenRow = []
-        resBlueRow = []
-        for col in extracted_image[0]:
-            resRedRow.append(col[0])
-            resGreenRow.append(col[1])
-            resBlueRow.append(col[2])
-        resRed.append(resRedRow)
-        resGreen.append(resGreenRow)
-        resBlue.append(resBlueRow)
-    
-    result.append(resRed)
-    result.append(resGreen)
-    result.append(resBlue)
-
-    return result
-
-
 if __name__ == "__main__":
     print(extractImage("testo.jpg"))

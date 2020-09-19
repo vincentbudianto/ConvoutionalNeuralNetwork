@@ -80,9 +80,9 @@ class Convolution:
     # print('filters :\n', self.filters)
 
     for curr_region, i, j in self.extract(padding):
-        curr_result = curr_region * self.filters
+        curr_result = np.tensordot(curr_region, self.filters)
         result[i, j] = np.sum(curr_result)
-        # print(i, j, ':', np.sum(curr_result))
+        #print(i, j, ':',"CURREGION : \n", curr_region, "FILTER :\n", self.filters, np.sum(curr_result))
 
     output = result[0:result.shape[0] - np.uint16(self.filterSizeH - 1):self.strideSize, 0:result.shape[1] - np.uint16(self.filterSizeW - 1):self.strideSize]
 

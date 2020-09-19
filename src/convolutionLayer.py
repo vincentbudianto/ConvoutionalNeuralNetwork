@@ -4,7 +4,7 @@ from pooling import Pooling
 from connectionMapper import ConnectionMapper
 from math import floor, ceil
 import numpy as np
-
+import cv2
 
 class ConvolutionLayer:
     """
@@ -78,8 +78,9 @@ class ConvolutionLayer:
         # Convolution
         convolutionList = []
         for i in range(1, 4):
-            kernel = np.arange(i, kernelSize * kernelSize * i + 1, i).reshape(kernelSize,kernelSize)
-            convolutionList.append(Convolution(None, paddingSize = 5, filterCount = 1, filterSizeH = kernelSize, filterSizeW = kernelSize, strideSize = 5, filters = kernel))
+            #kernel = np.arange(i, kernelSize * kernelSize * i + 1, i).reshape(kernelSize,kernelSize)
+            kernel = np.array([[-1, 0, 1], [-2, 0, 2], [-1, 0, 1]])
+            convolutionList.append(Convolution(None, paddingSize = 0, filterCount = 1, filterSizeH = kernelSize, filterSizeW = kernelSize, strideSize = 1, filters = kernel))
         self.convolution = convolutionList
 
         # Detector
@@ -92,9 +93,9 @@ class ConvolutionLayer:
 
         # Pooling
         poolingList = []
-        poolingList.append(Pooling(2, 2, 2, "MAX"))
-        poolingList.append(Pooling(2, 2, 2, "MAX"))
-        poolingList.append(Pooling(2, 2, 2, "MAX"))
+        poolingList.append(Pooling(2, 2, 2, "AVG"))
+        poolingList.append(Pooling(2, 2, 2, "AVG"))
+        poolingList.append(Pooling(2, 2, 2, "AVG"))
         #poolingList.append(Pooling(3, 3, 1, "AVG"))
         self.pooling = poolingList
 
@@ -110,13 +111,14 @@ class ConvolutionLayer:
         connectionMapper = ConnectionMapper(h, w, connectionMapper)
         self.connectionMapper = connectionMapper
 
-
+ 
     """
     Process the input matrix and sends out output
     """
     def executeConvolutionLayer(self):
         # Convolution
         convolutionResult = []
+        self.inputs = np.transpose(self.inputs,(2, 0, 1))
         for i in range(len(self.inputs)):
             targetedConvolution = self.inputMapper.getConnectionFromPreviousNode(i)
             for j in range(len(targetedConvolution)):
@@ -124,9 +126,9 @@ class ConvolutionLayer:
                     self.convolution[j].setImage(np.copy(self.inputs[i]))
         for i in range(len(self.convolution)):
             convolutionResult.append(self.convolution[i].forward())
-
-        #print("CONVOLUTION RESULT:\n", convolutionResult)
         
+        # cv2.imwrite("pepege.jpg", np.transpose(convolutionResult,(1, 2, 0)))
+
         # Detection
         detectionResult = []
         for i in range(self.connectionMapper.getNextNodeCount()):
@@ -146,11 +148,15 @@ class ConvolutionLayer:
         for i in range(len(detectionResult)):
             result.append(np.array(self.pooling[i].pool(detectionResult[i])))
         
-        self.outputs = result
-        self.outputSize = len(result)
+        self.outputs = np.array(result)
+        self.outputSize = len(np.array(result))
         
-        #print("RESULT:\n", result)
-        #print("SHAPE:\n",result[0].shape)
+        self.outputs = np.transpose(self.outputs,(1, 2, 0))
+
+        # cv2.imwrite("pepeg.jpg", self.outputs)
+
+        # print("RESULT:\n", self.outputs)
+        # print("SHAPE:\n", self.outputs.shape)
 
 
 
