@@ -78,8 +78,8 @@ class ConvolutionLayer:
         # Convolution
         convolutionList = []
         for i in range(1, 4):
-            #kernel = np.arange(i, kernelSize * kernelSize * i + 1, i).reshape(kernelSize,kernelSize)
-            kernel = np.array([[-1, 0, 1], [-2, 0, 2], [-1, 0, 1]])
+            kernel = np.arange(i, kernelSize * kernelSize * i + 1, i).reshape(kernelSize,kernelSize)
+            # kernel = np.array([[-1, 0, 1], [-2, 0, 2], [-1, 0, 1]])
             convolutionList.append(Convolution(None, paddingSize = 0, filterCount = 1, filterSizeH = kernelSize, filterSizeW = kernelSize, strideSize = 1, filters = kernel))
         self.convolution = convolutionList
 
@@ -88,7 +88,6 @@ class ConvolutionLayer:
         detectorList.append(Detector(None, "relu"))
         detectorList.append(Detector(None, "relu"))
         detectorList.append(Detector(None, "relu"))
-        #detectorList.append(Detector(None, "sigmoid"))
         self.detector = detectorList
 
         # Pooling
@@ -96,7 +95,6 @@ class ConvolutionLayer:
         poolingList.append(Pooling(2, 2, 2, "AVG"))
         poolingList.append(Pooling(2, 2, 2, "AVG"))
         poolingList.append(Pooling(2, 2, 2, "AVG"))
-        #poolingList.append(Pooling(3, 3, 1, "AVG"))
         self.pooling = poolingList
 
         # Input Mapper
@@ -127,7 +125,7 @@ class ConvolutionLayer:
         for i in range(len(self.convolution)):
             convolutionResult.append(self.convolution[i].forward())
         
-        # cv2.imwrite("convo.jpg", np.transpose(convolutionResult,(1, 2, 0)))
+        cv2.imwrite("convo.jpg", np.transpose(convolutionResult,(1, 2, 0)))
 
         # print("CONVOLUTION RESULT:\n", convolutionResult)
 
@@ -158,7 +156,7 @@ class ConvolutionLayer:
         
         self.outputs = np.transpose(self.outputs,(1, 2, 0))
 
-        # cv2.imwrite("finalconvo.jpg", self.outputs)
+        cv2.imwrite("finalconvo.jpg", self.outputs)
 
         # print("RESULT:\n", self.outputs)
         # print("SHAPE:\n", self.outputs.shape)

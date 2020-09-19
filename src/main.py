@@ -6,7 +6,7 @@ import numpy as np
 
 def test():
     # np.set_printoptions(threshold=np.inf)
-    extractedImage = extractImage("hololive29.jpg", True, 200, 200)
+    extractedImage = extractImage("test.png", True, 200, 200)
 
     print(np.array(extractedImage[0]).shape)
 
