@@ -6,7 +6,6 @@ import numpy as np
 
 extractedImage = extractImage("hololive29.jpg", True, 200, 200)
 extractedImage = np.array(extractedImage[0])
-# print(extractedImage)
 conv = Convolution(np.array(extractedImage))
 
 result = conv.forward()
