@@ -30,4 +30,4 @@ def test(convInputSize, convFilterCount, convFilterSize, convPaddingSize, convSt
 
 if __name__ == '__main__':
     test(200, 2, 3, 2, 1, 3, 1, 'AVG')
-    
+

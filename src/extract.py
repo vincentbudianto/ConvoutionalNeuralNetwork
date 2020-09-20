@@ -20,10 +20,10 @@ def convertImage(image_file):
     im = Image.open(image_file)
 
     np_image = numpy.array(im)
-    new_image = numpy.zeros((np_image.shape[0], np_image.shape[1], 3)) 
+    new_image = numpy.zeros((np_image.shape[0], np_image.shape[1], 3))
 
     for each_channel in range(3):
-        new_image[:,:,each_channel] = np_image[:,:,each_channel]  
+        new_image[:,:,each_channel] = np_image[:,:,each_channel]
 
     # flushing
     np_image = []

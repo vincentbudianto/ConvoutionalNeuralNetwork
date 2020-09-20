@@ -12,7 +12,7 @@ class DenseLayer:
 
     def initiateLayer(self):
         for _ in range(self.nodeCount):
-            
+
             currentNodeWeightMatrix = np.random.randn(self.flatlength) * 10
             current_node = Dense(currentNodeWeightMatrix)
             self.denseNodes.append(current_node)
@@ -23,15 +23,14 @@ class DenseLayer:
         for currentNode in self.denseNodes:
             outputArray = np.append(outputArray, currentNode.get_output(flatArray))
 
-            
+
         self.outputs = self.outputNode.get_output(outputArray)
-        
+
         print(self.outputs)
-        
 
 
 
 
 
-        
-        
+
+

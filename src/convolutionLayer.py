@@ -36,9 +36,7 @@ class ConvolutionLayer:
         self.inputMapper = inputMapper
         self.connectionMapper = connectionMapper
 
-    """
-    Getter setter untuk setiap atribut
-    """
+    ### GETTER / SETTER ###
     def setInputs(self, inputs):
         self.inputs = inputs
     def addInputs(self, newInput):
@@ -94,7 +92,7 @@ class ConvolutionLayer:
             poolingList.append(Pooling(poolFilterSize, poolFilterSize, poolStrideSize, poolMode))
         self.pooling = poolingList
 
- 
+
     """
     Process the input matrix and sends out output
     """
@@ -116,9 +114,9 @@ class ConvolutionLayer:
 
             # Pooling
             poolingResult = np.array(self.pooling[i].pool(detectionResult))
-            
+
             result.append(poolingResult)
-        
+
         self.outputs = np.array(result)
         print(self.outputs)
 

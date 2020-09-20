@@ -9,7 +9,7 @@ class Convolution:
 
     if image is not None:
         self.image = np.transpose(image,(2, 0, 1))
-    
+
     if filters is None and image is not None:
         h, w, t = image.shape
         self.filters = np.array([[[-1, 0, 1], [-2, 0, 2], [-1, 0, 1]],[[-1, 0, 1], [-2, 0, 2], [-1, 0, 1]],[[-1, 0, 1], [-2, 0, 2], [-1, 0, 1]]])
@@ -41,6 +41,9 @@ class Convolution:
       self.strideSize = strideSize
 
   def padding(self):
+    """
+    Add padding to image.
+    """
     result = []
     for imageLayer in self.image:
         tempResult = np.zeros((imageLayer.shape[0] + (self.paddingSize * 2), imageLayer.shape[1] + (self.paddingSize * 2)))
@@ -54,10 +57,9 @@ class Convolution:
     return result
 
   def extract(self, padding):
-    '''
-    Generates all possible i x j image regions using padding.
-    - image is a 2d numpy array.
-    '''
+    """
+    Generates all possible i x j image regions.
+    """
     h, w = padding.shape
 
     for i in range(0, (h - (self.filterSizeH - self.strideSize)), self.strideSize):
@@ -67,10 +69,9 @@ class Convolution:
             yield region, i, j
 
   def forward(self):
-    '''
+    """
     Performs a forward pass of the conv layer using the given input.
-    Returns a 3d numpy array with dimensions (h, w).
-    '''
+    """
     padding = self.padding()
 
     totalResult = None
@@ -81,7 +82,7 @@ class Convolution:
         for curr_region, i, j in self.extract(paddingLayer):
             curr_result = np.tensordot(curr_region, self.filters[k])
             result[i, j] = np.sum(curr_result)
-            #print(i, j, ':',"CURREGION : \n", curr_region, "FILTER :\n", self.filters, np.sum(curr_result))
+            #print(i, j, ":","CURREGION : \n", curr_region, "FILTER :\n", self.filters, np.sum(curr_result))
 
         output = result[0:result.shape[0] - np.uint16(self.filterSizeH - 1):self.strideSize, 0:result.shape[1] - np.uint16(self.filterSizeW - 1):self.strideSize]
 
@@ -89,7 +90,7 @@ class Convolution:
             totalResult = output
         else:
             totalResult += output
-    
+
     print(totalResult)
 
     return totalResult

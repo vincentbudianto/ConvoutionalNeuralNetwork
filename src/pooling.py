@@ -17,7 +17,7 @@ class Pooling:
         return self.__filterWidth
     def setFilterWidth(self, filterWidth):
         self.__filterWidth = filterWidth
-    
+
     def getFilterHeight(self):
         return self.__filterHeight
     def setFilterHeight(self, filterHeight):
@@ -27,12 +27,12 @@ class Pooling:
         return self.__stride
     def setStride(self, stride):
         self.__stride = stride
-    
+
     def getMode(self):
         return self.__mode
     def setMode(self, mode):
         self.__mode = mode
-    
+
     ### POOLING METHODS
     # Return matrix partitioned according to filterWidth and filterHeight
     def __partitionInput(self, inputMatrix, startPosition):
@@ -52,7 +52,7 @@ class Pooling:
                 if inputMatrix[i][j] > maxResult:
                     maxResult = inputMatrix[i][j]
         return maxResult
-    
+
     # Average function
     def __averageFiltered(self, inputMatrix):
         total = 0
@@ -61,7 +61,7 @@ class Pooling:
             for j in range(len(inputMatrix[0])):
                 total += inputMatrix[i][j]
         return (total / size)
-    
+
     # Pooling method
     def pool(self, inputMatrix):
         result = []
@@ -79,13 +79,13 @@ class Pooling:
                     resultCell = self.__averageFiltered(partitioned)
                 resultRow.append(resultCell)
                 startPosition[1] += self.__stride
-            
+
             result.append(resultRow)
             startPosition[1] = 0
             startPosition[0] += self.__stride
-        
+
         return result
-        
 
 
-    
+
+
