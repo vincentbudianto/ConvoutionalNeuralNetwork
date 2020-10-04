@@ -1,8 +1,9 @@
 import numpy as np
 from dense import Dense
+from scipy.special import softmax
 
-class DenseLayer:
-    def __init__(self, flatlength, nodeCount = 10):
+class OutputLayer:
+    def __init__(self, flatlength, nodeCount = 2):
         self.flatArray = None
         self.flatlength = flatlength
         self.denseNodes = []
@@ -11,7 +12,6 @@ class DenseLayer:
 
     def initiateLayer(self):
         for _ in range(self.nodeCount):
-
             currentNodeWeightMatrix = np.random.randn(self.flatlength) * 10
             current_node = Dense(currentNodeWeightMatrix)
             self.denseNodes.append(current_node)
@@ -22,8 +22,7 @@ class DenseLayer:
         for currentNode in self.denseNodes:
             outputArray = np.append(outputArray, currentNode.get_output(flatArray))
 
-        self.outputs = outputArray
-        #self.outputs = self.outputNode.get_output(outputArray)
+        self.outputs = softmax(outputArray)
 
 
 

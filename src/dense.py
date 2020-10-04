@@ -4,13 +4,14 @@ class Dense:
     def __init__(self, weightarray, activation_function="relu", leaky_slope = 0.5, bias = 0):
         self.sigma = None
         self.bias = bias
+        self.biasweight = 0.5
         self.activation_function = activation_function
         self.leaky_slope = leaky_slope
         self.weightarray = weightarray
 
     def calculateSigma(self, inputArray):
         sigmaArray = np.tensordot(self.weightarray, inputArray, (0,0))
-        self.sigma = np.sum(sigmaArray) + self.bias
+        self.sigma = np.sum(sigmaArray) + self.bias * self.biasweight
 
     def activate(self):
         return self.forward_activation(self.sigma)
@@ -26,6 +27,8 @@ class Dense:
             return np.maximum(0,X)
         elif self.activation_function == "leaky_relu":
             return np.maximum(self.leaky_slope*X,X)
+        elif self.activation_function == "softmax":
+            return X
 
     def get_output(self, inputArray):
         self.calculateSigma(inputArray)
