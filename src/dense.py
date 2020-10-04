@@ -1,17 +1,16 @@
 import numpy as np
 
 class Dense:
-    def __init__(self, weightarray, activation_function="relu", leaky_slope = 0.5, bias = 0):
+    def __init__(self, weightarray, activation_function="relu", leaky_slope = 0.5, bias = 0.5):
         self.sigma = None
         self.bias = bias
-        self.biasweight = 0.5
         self.activation_function = activation_function
         self.leaky_slope = leaky_slope
         self.weightarray = weightarray
 
     def calculateSigma(self, inputArray):
         sigmaArray = np.tensordot(self.weightarray, inputArray, (0,0))
-        self.sigma = np.sum(sigmaArray) + self.bias * self.biasweight
+        self.sigma = np.sum(sigmaArray) + self.bias 
 
     def activate(self):
         return self.forward_activation(self.sigma)

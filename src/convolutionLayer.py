@@ -1,7 +1,6 @@
 from convolution import Convolution
 from detector import Detector
 from pooling import Pooling
-from connectionMapper import ConnectionMapper
 from math import floor, ceil
 import numpy as np
 import cv2
