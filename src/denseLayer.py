@@ -23,7 +23,6 @@ class DenseLayer:
             outputArray = np.append(outputArray, currentNode.get_output(flatArray))
 
         self.outputs = outputArray
-        #self.outputs = self.outputNode.get_output(outputArray)
 
 
 

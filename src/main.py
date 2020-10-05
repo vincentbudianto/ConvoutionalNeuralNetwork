@@ -1,6 +1,7 @@
 from extract import extractImage
 from convolutionLayer import ConvolutionLayer
 from denseLayer import DenseLayer
+from outputLayer import OutputLayer
 from flatten import FlatteningLayer
 import numpy as np
 
@@ -28,9 +29,14 @@ def test(fileName, convInputSize, convFilterCount, convFilterSize, convPaddingSi
     denseLayer.initiateLayer()
     denseLayer.executeDenseLayer(flatArray)
 
-    print("\nDENSE LAYER RESULT")
-    print(denseLayer.outputs)
+    dens1shape = denseLayer.outputs.shape
+
+    outputLayer = OutputLayer(dens1shape[0])
+    outputLayer.initiateLayer()
+    outputLayer.executeDenseLayer(denseLayer.outputs)
+    print("OUTPUT RESULT")
+    print(outputLayer.outputs)
 
 if __name__ == '__main__':
-    test("hololive29.jpg", 200, 2, 3, 2, 1, 3, 1, 'AVG')
+    test("soberu.png", 200, 2, 3, 2, 1, 3, 1, 'AVG')
 
