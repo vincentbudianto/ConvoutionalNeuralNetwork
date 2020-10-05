@@ -22,8 +22,40 @@ class OutputLayer:
         for currentNode in self.denseNodes:
             outputArray = np.append(outputArray, currentNode.get_output(flatArray))
 
-
         self.outputs = softmax(outputArray)
+
+        
+    def computeError(self, label):
+        if label == 0:
+            #cat
+            return -np.log(self.outputs[0])
+
+        elif label == 1:
+            #dog
+            return -np.log(self.outputs[1])
+        
+    def updateweight(self, label, learningrate):
+        phase1 = []
+        newweight = []
+
+        #add bias
+        valuearr = self.flatArray
+        valuearr.append(1)
+
+        for x, output in enumerate(self.outputs):
+            phase1.append(output if (x != label) else (-1 * (1 - output)))
+
+        #nodecount + bias
+
+        for val in valuearr:
+            newweight.append(np.dot(phase1, val).tolist())
+
+        for i, node in enumerate(self.denseNodes):
+            nodenewweight = []
+            for weight in newweight:
+                nodenewweight.append(weight[i])
+            node.updateWeight(nodenewweight, learningrate)
+
 
 
 

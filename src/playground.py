@@ -1,12 +1,14 @@
 from scipy.special import softmax
 import numpy as np
 
-np.set_printoptions(precision=2)
+# valuearr = [2, 3, 5]
+phase1 = [2, 3, 1, 10, 3]
+# newweight = []
 
-x = np.array([50,51,12,0.22,12,1231]) 
 
-m = softmax(x)
+# for val in valuearr:
+#     newweight.append(np.dot(phase1, val).tolist())
 
-print(m.sum(axis=0))
+# print(newweight)
 
-print(m)
+print(phase1[len(phase1) - 1])

@@ -37,6 +37,13 @@ def test(fileName, convInputSize, convFilterCount, convFilterSize, convPaddingSi
     print("OUTPUT RESULT")
     print(outputLayer.outputs)
 
+    #BACKWARD PROPAGATION
+    #Consensus Output Node 0 = Cat
+    #Consensus Output Node 1 = Dog
+    outputLayer.computeError(0)
+    outputLayer.updateWeight(0, 0,2)
+
 if __name__ == '__main__':
     test("soberu.png", 200, 2, 3, 2, 1, 3, 1, 'AVG')
+
 

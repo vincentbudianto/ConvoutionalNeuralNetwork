@@ -10,7 +10,7 @@ class Dense:
 
     def calculateSigma(self, inputArray):
         sigmaArray = np.tensordot(self.weightarray, inputArray, (0,0))
-        self.sigma = np.sum(sigmaArray) + self.bias 
+        self.sigma = np.sum(sigmaArray) + self.bias
 
     def activate(self):
         return self.forward_activation(self.sigma)
@@ -32,3 +32,7 @@ class Dense:
     def get_output(self, inputArray):
         self.calculateSigma(inputArray)
         return self.activate()
+
+    def updateWeight(self, newnodeweight, learningrate):
+        self.weightarray = [(weight - learningrate * newnodeweight[i]) for i, weight in enumerate(self.weightarray)]
+        self.bias = self.bias - learningrate * newnodeweight[len(newnodeweight) - 1]
