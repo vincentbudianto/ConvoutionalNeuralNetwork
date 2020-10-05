@@ -12,7 +12,7 @@ def test(fileName, convInputSize, convFilterCount, convFilterSize, convPaddingSi
     convolutionLayer.setConfigurationDefault(convFilterCount, convFilterSize, convPaddingSize, convStrideSize, poolFilterSize, poolStrideSize, poolMode)
     convolutionLayer.setInputs(np.array(extractedImage[0]))
 
-    convolutionLayer.executeConvolutionLayer()
+    convolutionLayer.convolutionForward()
 
     print("CONVOLUTION LAYER RESULT")
     print(convolutionLayer.outputs)

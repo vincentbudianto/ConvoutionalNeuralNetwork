@@ -96,7 +96,7 @@ class ConvolutionLayer:
     """
     Process the input matrix and sends out output
     """
-    def executeConvolutionLayer(self):
+    def convolutionForward(self):
         result = []
         self.inputs = np.transpose(self.inputs,(2, 0, 1))
         for i in range(len(self.convolution)):
