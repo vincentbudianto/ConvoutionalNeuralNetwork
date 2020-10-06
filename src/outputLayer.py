@@ -24,7 +24,7 @@ class OutputLayer:
 
         self.outputs = softmax(outputArray)
 
-        
+
     def computeError(self, label):
         if label == 0:
             #cat
@@ -33,8 +33,8 @@ class OutputLayer:
         elif label == 1:
             #dog
             return -np.log(self.outputs[1])
-        
-    def updateweight(self, label, learningrate):
+
+    def updateWeight(self, label, learningrate):
         phase1 = []
         newweight = []
 

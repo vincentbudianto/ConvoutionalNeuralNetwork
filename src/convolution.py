@@ -12,9 +12,11 @@ class Convolution:
 
     if filters is None and image is not None:
         h, w, t = image.shape
+        self.numFilters = t
         self.filters = np.random.randn(t, filterSizeH, filterSizeW) / (filterSizeH * filterSizeW)
     else:
         self.filters = filters
+        self.numFilters = len(filters)
 
   ### GETTER / SETTER ###
   def getImage(self):
@@ -54,6 +56,7 @@ class Convolution:
         result.append(tempResult)
 
     result = np.array(result)
+    self.last_input = result
     return result
 
   def extract(self, padding):
@@ -91,3 +94,15 @@ class Convolution:
             totalResult += output
 
     return totalResult
+
+def backprop(self, delta_matrix, learn_rate):
+    """
+    Performs a backward pass of the conv layer using the given input.
+    """
+    delta_filters = np.zeros(self.filters.shape)
+
+    for curr_region, i, j in self.extract(self.last_input):
+      for k in range(self.numFilters):
+        delta_filters[k] += delta_matrix[i, j, k] * curr_region
+
+    self.filters -= learn_rate * delta_filters
