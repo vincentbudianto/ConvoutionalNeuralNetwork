@@ -24,8 +24,6 @@ class Dense:
             return np.tanh(X)
         elif self.activation_function == "relu":
             return np.maximum(0,X)
-        elif self.activation_function == "leaky_relu":
-            return np.maximum(self.leaky_slope*X,X)
         elif self.activation_function == "softmax":
             return X
 

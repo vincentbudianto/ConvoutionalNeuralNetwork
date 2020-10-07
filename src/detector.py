@@ -33,8 +33,6 @@ class Detector:
             return np.tanh(X)
         elif self.activation_function == "relu":
             return np.maximum(0,X)
-        elif self.activation_function == "leaky_relu":
-            return np.maximum(self.leaky_slope*X,X)
 
     def get_output(self, inputarray):
         self.sigma = input
@@ -50,8 +48,6 @@ class Detector:
             return ones - np.square(np.tanh(delta_matrix))
         elif self.activation_function == "relu":
             return [[1 if col > 0 else 0 for col in row] for row in delta_matrix]
-        elif self.activation_function == "leaky_relu":
-            return [[self.leaky_slope if col > 0 else 0 for col in row] for row in delta_matrix]
 
 if __name__ == "__main__":
     print("Testing numpy detector layer")
