@@ -1,6 +1,11 @@
 import numpy as np
 from dense import Dense
 
+# sigmoid = lambda x : 1 / (1 + exp(-x))
+# relu = lambda x : x * (x > 0)
+# d_sigmoid = lambda x : x * (1 - x)
+# d_relu = lambda x : 1 * (x > 0)
+
 class DenseLayer:
     def __init__(self, flatlength, nodeCount = 10):
         self.flatArray = None

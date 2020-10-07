@@ -31,7 +31,7 @@ def test(fileName, convInputSize, convFilterCount, convFilterSize, convPaddingSi
 
     dens1shape = denseLayer.outputs.shape
 
-    outputLayer = OutputLayer(dens1shape[0])
+    outputLayer = OutputLayer(dens1shape[0], 1, 1)
     outputLayer.initiateLayer()
     outputLayer.executeDenseLayer(denseLayer.outputs)
     print("OUTPUT RESULT")
@@ -40,8 +40,9 @@ def test(fileName, convInputSize, convFilterCount, convFilterSize, convPaddingSi
     #BACKWARD PROPAGATION
     #Consensus Output Node 0 = Cat
     #Consensus Output Node 1 = Dog
-    outputLayer.computeError(0)
-    outputLayer.updateWeight(0, 0.2)
+    error = outputLayer.computeError(0)
+    outputLayer.calcBackwards(0)
+    outputLayer.updateWeight(0.001)
 
 if __name__ == '__main__':
     test("src\soberu.png", 200, 2, 3, 2, 1, 3, 1, 'AVG')

@@ -3,12 +3,16 @@ from dense import Dense
 from scipy.special import softmax
 
 class OutputLayer:
-    def __init__(self, flatlength, nodeCount = 2):
+    def __init__(self, flatlength, batchsize, batchperepoch, nodeCount = 2):
         self.flatArray = None
         self.flatlength = flatlength
         self.denseNodes = []
         self.nodeCount = nodeCount
         self.outputs = None
+        self.deltaweights = None
+        self.cache = False
+        self.batchsize = batchsize
+        self.batchperepoch = batchperepoch
 
     def initiateLayer(self):
         for _ in range(self.nodeCount):
@@ -34,27 +38,33 @@ class OutputLayer:
             #dog
             return -np.log(self.outputs[1])
 
-    def updateWeight(self, label, learningrate):
-        phase1 = []
-        newweight = []
+    def calcBackwards(self, label):
+        phase1 = np.array([])
 
         #add bias
-        valuearr = self.flatArray
-        valuearr.append(1)
+        valuearr = np.array(self.flatArray)
+        valuearr = np.append(valuearr, 1)
 
         for x, output in enumerate(self.outputs):
-            phase1.append(output if (x != label) else (-1 * (1 - output)))
+            phase1 = np.append(phase1 , (output if (x != label) else (-1 * (1 - output))))
 
-        #nodecount + bias
+        newweight = np.array((np.matmul(phase1.reshape(-1,1), valuearr[np.newaxis])))
 
-        for val in valuearr:
-            newweight.append(np.dot(phase1, val).tolist())
+        if self.cache:
+            self.deltaweights = self.deltaweights + newweight
+        else:
+            self.deltaweights = newweight
+            self.cache = True
+
+    def updateWeight(self, learningrate):
+
+        self.cache = False
+
+        self.deltaweights = (self.deltaweights / (self.batchsize * self.batchperepoch)) * learningrate
 
         for i, node in enumerate(self.denseNodes):
-            nodenewweight = []
-            for weight in newweight:
-                nodenewweight.append(weight[i])
-            node.updateWeight(nodenewweight, learningrate)
+            node.updateWeight(self.deltaweights[i])
+
 
 
 

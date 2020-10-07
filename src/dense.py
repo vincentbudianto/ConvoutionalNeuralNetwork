@@ -33,6 +33,6 @@ class Dense:
         self.calculateSigma(inputArray)
         return self.activate()
 
-    def updateWeight(self, newnodeweight, learningrate):
-        self.weightarray = [(weight - learningrate * newnodeweight[i]) for i, weight in enumerate(self.weightarray)]
-        self.bias = self.bias - learningrate * newnodeweight[len(newnodeweight) - 1]
+    def updateWeight(self, newnodeweight):
+        self.weightarray = self.weightarray - newnodeweight[:-1]
+        self.bias = self.bias - newnodeweight[len(newnodeweight) - 1]
