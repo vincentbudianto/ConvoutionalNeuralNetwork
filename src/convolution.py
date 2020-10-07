@@ -95,14 +95,16 @@ class Convolution:
 
     return totalResult
 
-def backprop(self, delta_matrix, learn_rate):
-    """
-    Performs a backward pass of the conv layer using the given input.
-    """
-    delta_filters = np.zeros(self.filters.shape)
+    def backprop(self, delta_matrix, learn_rate):
+        """
+        Performs a backward pass of the conv layer using the given input.
+        """
+        delta_filters = np.zeros(self.filters.shape)
 
-    for curr_region, i, j in self.extract(self.last_input):
-      for k in range(self.numFilters):
-        delta_filters[k] += delta_matrix[i, j, k] * curr_region
+        for curr_region, i, j in self.extract(self.last_input):
+            for k in range(self.numFilters):
+                delta_filters[k] += delta_matrix[i, j, k] * curr_region
 
-    self.filters -= learn_rate * delta_filters
+        self.filters -= learn_rate * delta_filters
+
+    return self.filters
