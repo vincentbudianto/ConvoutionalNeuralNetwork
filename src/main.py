@@ -88,7 +88,8 @@ def loadmodel():
 if __name__ == '__main__':
     curNetwork = Network()
     curNetwork.initiate_network(batchsize = 2, batchperepoch = 9, convInputSize = 100, convFilterCount = 2, convFilterSize = 3, convPaddingSize = 2, convStrideSize = 1, detectorMode = 'relu', poolFilterSize = 3, poolStrideSize = 1, poolMode = 'AVG')
-    curNetwork.kfoldxvalidation("test_data\cats", label=0, epoch=10, learning_rate=0.001)
+    curNetwork.kfoldxvalidation("test_data", label=0, epoch=10, learning_rate=0.001)
+    # curNetwork.kfoldxvalidation("train_data", label=0, epoch=10, learning_rate=0.001)
 
     savemodel(curNetwork)
     loadedNetwork = loadmodel()
