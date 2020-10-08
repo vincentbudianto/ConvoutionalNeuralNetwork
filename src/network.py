@@ -40,8 +40,13 @@ class Network:
         self.convolution_layer.setInputs(np.array(extractedImage))
         self.convolution_layer.convolutionForward()
 
+        print("Forward convolution:", self.convolution_layer.outputs.shape)
+
         flatArray = self.flattening_layer.flatten(self.convolution_layer.outputs)
+        print("Forward flatten:", flatArray.shape)
+
         self.dense_layer.executeDenseLayer(flatArray)
+        print("Forward dense:", self.dense_layer.outputs.shape)
 
         self.output_layer.executeDenseLayer(self.dense_layer.outputs)
 
@@ -52,7 +57,14 @@ class Network:
         ######################################
 
         d_out = self.output_layer.calcBackwards(label)
+        print(d_out)
         d_out2 = self.dense_layer.calcBackwards(d_out, self.output_layer.getweight())
+        print("Backwards dense:", d_out2.shape)
+        d_flatten = self.flattening_layer.calcBackwards(d_out2, self.dense_layer.getweight())
+        print("Backwards flatten:", d_flatten.shape)
+
+        d_convolution = self.convolution_layer.backward_propagation(d_flatten)
+        print("Backwards convolution:")
 
     def update_weight(self, learning_rate):
         self.output_layer.updateWeight(learning_rate)

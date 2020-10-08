@@ -126,6 +126,7 @@ class Convolution:
             self.cache = True
 
         print('convolution weight:')
+        print(self.weight)
         print(self.deltaweights)
 
         return self.deltaweights
