@@ -4,7 +4,7 @@ from denseLayer import DenseLayer
 from outputLayer import OutputLayer
 from flatten import FlatteningLayer
 import numpy as np
-import pickle 
+import pickle
 import os
 
 class Network:
@@ -16,21 +16,21 @@ class Network:
 
         self.convInputSize = None
 
-    def initiate_network(self, convInputSize, convFilterCount, convFilterSize, convPaddingSize, convStrideSize, poolFilterSize, poolStrideSize, poolMode, activation_dense="relu"):
-        
+    def initiate_network(self, convInputSize, convFilterCount, convFilterSize, convPaddingSize, convStrideSize, poolFilterSize, poolStrideSize, detectorMode, poolMode, activation_dense="relu"):
+
         self.convInputSize = convInputSize
 
         self.convolution_layer = ConvolutionLayer()
-        self.convolution_layer.setConfigurationDefault(convFilterCount, convFilterSize, convPaddingSize, convStrideSize, poolFilterSize, poolStrideSize, poolMode)
-        
+        self.convolution_layer.setConfigurationDefault(convFilterCount, convFilterSize, convPaddingSize, convStrideSize, detectorMode, poolFilterSize, poolStrideSize, poolMode)
+
         self.flattening_layer = FlatteningLayer()
-        
+
         self.dense_layer = DenseLayer(convInputSize * convInputSize * convFilterCount, 1, 1, activation_dense)
         self.dense_layer.initiateLayer()
 
         self.output_layer = OutputLayer(10, 1, 1)
         self.output_layer.initiateLayer()
-        
+
     def train_one(self, fileName, label):
         ##################################
         #IMAGE LOAD & FORWARD PROPAGATION#
@@ -38,7 +38,7 @@ class Network:
         extractedImage = extractImage(fileName, True, self.convInputSize, self.convInputSize)
         self.convolution_layer.setInputs(np.array(extractedImage[0]))
         self.convolution_layer.convolutionForward()
-        
+
         flatArray = self.flattening_layer.flatten(self.convolution_layer.outputs)
         self.dense_layer.executeDenseLayer(flatArray)
 
@@ -52,7 +52,7 @@ class Network:
 
         d_out = self.output_layer.calcBackwards(label)
         d_out2 = self.dense_layer.calcBackwards(d_out, self.output_layer.getweight())
-    
+
     def update_weight(self, learning_rate):
         self.output_layer.updateWeight(learning_rate)
         self.dense_layer.updateWeight(learning_rate)
@@ -63,7 +63,7 @@ class Network:
             os.chdir(directory)
 
         files = os.listdir()
-        
+
         images = [file for file in files if file.endswith(('jpg'))]
 
         currentbatch = []
@@ -83,7 +83,7 @@ class Network:
                 print("TRAIN DONE : ", img)
             self.update_weight(learning_rate)
             print("UPDATE WEIGHT")
-                    
+
 
 if __name__ == '__main__':
     curNetwork = Network()
