@@ -76,7 +76,7 @@ class ConvolutionLayer:
         convolutionList = []
         for i in range(convFilterCount):
             dummyFilter = np.array([[[-1, 0, 1], [-2, 0, 2], [-1, 0, 1]],[[-1, 0, 1], [-2, 0, 2], [-1, 0, 1]],[[-1, 0, 1], [-2, 0, 2], [-1, 0, 1]]])
-            convolutionList.append(Convolution(batchsize, batchperepoch, None, convPaddingSize, convFilterSize, convFilterSize, convStrideSize, filters = None))
+            convolutionList.append(Convolution(batchsize, batchperepoch, None, convPaddingSize, convFilterSize, convFilterSize, convStrideSize, filters = dummyFilter))
         self.convolution = convolutionList
 
         # Detector
@@ -134,8 +134,8 @@ class ConvolutionLayer:
         delta_pooling = pooling.back_propagation(delta_matrix)
         delta_detector = detector.back_propagation(delta_pooling)
         delta_convolution = convolution.back_propagation(delta_detector)
-        print('delta_convolution:\n', delta_convolution)
-        print('shape:', delta_convolution.shape)
+
+        print("Result =", delta_convolution)
 
     def updateWeight(self, learning_rate):
         for i in range(len(self.convolution)):

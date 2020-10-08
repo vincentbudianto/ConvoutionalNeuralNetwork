@@ -33,8 +33,9 @@ class Convolution:
 
         if image is not None:
             t, h, w = image.shape
-            self.filters = np.random.randn(t, self.filterSizeH, self.filterSizeW) / (self.filterSizeH * self.filterSizeW)
-            self.numFilters = t
+            if self.filters is None:
+                self.filters = np.random.randn(t, self.filterSizeH, self.filterSizeW) / (self.filterSizeH * self.filterSizeW)
+                self.numFilters = t
 
     def getPadding(self):
         return self.paddingSize
@@ -87,6 +88,7 @@ class Convolution:
             result = np.zeros(paddingLayer.shape)
 
             for curr_region, i, j in self.Extract(paddingLayer):
+
                 curr_result = np.tensordot(curr_region, self.filters[k])
                 result[i, j] = np.sum(curr_result)
 
@@ -100,36 +102,20 @@ class Convolution:
         return totalResult
 
     def back_propagation(self, delta_matrix):
-        print('\n\nCONV BACKPROP\n')
         filters = np.zeros(self.filters.shape)
-        # print('filters:\n', filters)
-        print(self.numFilters)
-        print('filters shape:', filters.shape)
-        # print('delta_matrix:\n', delta_matrix)
-        print('delta_matrix shape:', delta_matrix.shape)
 
         for k in range(len(self.output)):
+            filter_channel = np.zeros(self.filters[k].shape)
             paddingLayer = self.output[k]
 
             for curr_region, i, j in self.Extract(paddingLayer):
-                # print(' region (' + str(i) + ',' + str(j) + ') :\n', curr_region)
-                # print('  shape:', curr_region.shape)
-                # print('  delta (' + str(i) + ',' + str(j) + ') :', delta_matrix[i, j])
-
-                filters += delta_matrix[i, j] * curr_region
-
-                # print('filters (' + str(i) + ',' + str(j) + ') :', filters)
-                # print('  shape:', filters.shape)
+                filters[k] += delta_matrix[i, j] * curr_region
 
         if self.cache:
             self.deltafilters = self.deltafilters + filters
         else:
             self.deltafilters = filters
             self.cache = True
-
-        print('convolution filters:')
-        # print(self.deltafilters)
-        print('  shape:', self.deltafilters.shape)
 
         return self.deltafilters
 
