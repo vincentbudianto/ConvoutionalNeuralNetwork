@@ -88,7 +88,7 @@ def loadmodel():
 if __name__ == '__main__':
     curNetwork = Network()
     curNetwork.initiate_network(100, 2, 3, 2, 1, 'relu', 3, 1, 'AVG')
-    curNetwork.train_one("src\data\hololive29.jpg", 0)
+    curNetwork.kfoldxvalidation("test_data\cats", label=0, epoch=10, learning_rate=0.001)
 
     savemodel(curNetwork)
     loadedNetwork = loadmodel()
