@@ -6,6 +6,7 @@ from flatten import FlatteningLayer
 import numpy as np
 import pickle
 import os
+import random
 
 class Network:
     def __init__(self):
@@ -57,7 +58,7 @@ class Network:
     def update_weight(self, learning_rate):
         self.output_layer.updateWeight(learning_rate)
         self.dense_layer.updateWeight(learning_rate)
-        self.convolution_layer.updateWeight(learning_rate)
+        self.convolution_layer.updateFilters(learning_rate)
 
     def train(self, directory, label, epoch, batchsize, batchperepoch, learning_rate):
 
@@ -68,27 +69,47 @@ class Network:
 
         images = [file for file in files if file.endswith(('jpg'))]
 
-        currentbatch = []
-        for image in images:
-            currentbatch.append(image)
-            if (len(currentbatch) == batchsize):
-                for img in currentbatch:
-                    self.train_one(img, label)
-                    print("TRAIN DONE : ", img)
-                self.update_weight(learning_rate)
-                print("UPDATE WEIGHT")
+        for i in range(epoch):
+            print('epoch ' + str(i) + '/' + str(epoch))
+            imagesList = images
+            random.shuffle(imagesList)
+
+            for j in range(batchperepoch):
+                print('batch ' + str(j) + '/' + str(batchperepoch))
                 currentbatch = []
 
-        if (len(currentbatch) > 0):
-            for img in currentbatch:
-                self.train_one(img, label)
-                print("TRAIN DONE : ", img)
-            self.update_weight(learning_rate)
-            print("UPDATE WEIGHT")
+                while (len(currentbatch) != batchsize) and (len(imagesList) > 0):
+                    currentbatch.append(imagesList.pop(0))
+
+                print('total image :', len(currentbatch))
+                for image in currentbatch:
+                    self.train_one(image, label)
+                    print("TRAIN DONE : ", image)
+
+                self.update_weight(learning_rate)
+                print("UPDATE WEIGHT")
+
+        # currentbatch = []
+        # for image in images:
+        #     currentbatch.append(image)
+        #     if (len(currentbatch) == batchsize):
+        #         for img in currentbatch:
+        #             self.train_one(img, label)
+        #             print("TRAIN DONE : ", img)
+        #         self.update_weight(learning_rate)
+        #         print("UPDATE WEIGHT")
+        #         currentbatch = []
+
+        # if (len(currentbatch) > 0):
+        #     for img in currentbatch:
+        #         self.train_one(img, label)
+        #         print("TRAIN DONE : ", img)
+        #     self.update_weight(learning_rate)
+        #     print("UPDATE WEIGHT")
 
 
 if __name__ == '__main__':
     curNetwork = Network()
-    curNetwork.initiate_network(100, 2, 3, 2, 1, 3, 1, 'AVG')
+    curNetwork.initiate_network(1, 1, 100, 2, 3, 2, 1, 3, 1, 'AVG')
     curNetwork.train("test_data\cats", label=0, epoch=10, batchsize=4, batchperepoch=1, learning_rate=0.001)
     #curNetwork.train_one("src\data\hololive29.jpg", 0)

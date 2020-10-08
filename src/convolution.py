@@ -10,7 +10,7 @@ class Convolution:
         self.batchsize = batchsize
         self.batchperepoch = batchperepoch
         self.cache = False
-        self.deltaweights = None
+        self.deltafilters = None
 
         if image is not None:
             self.image = np.transpose(image,(2, 0, 1))
@@ -110,31 +110,32 @@ class Convolution:
                     yield region, i, j
 
     def back_propagation(self, delta_matrix):
-        weight = np.zeros(delta_matrix.shape)
-        h, w = weight.shape
+        filters = np.zeros(delta_matrix.shape)
+        h, w = filters.shape
 
         for k in range(len(self.output)):
             paddingLayer = self.output[k]
 
             for curr_region, i, j in self.backwardExtract(paddingLayer, w, h):
-                weight += delta_matrix[i, j] * curr_region
+                filters += delta_matrix[i, j] * curr_region
 
         if self.cache:
-            self.deltaweights = self.deltaweights + weight
+            self.deltafilters = self.deltafilters + filters
         else:
-            self.deltaweights = weight
+            self.deltafilters = filters
             self.cache = True
 
-        print('convolution weight:')
-        print(self.deltaweights)
+        print('convolution filters:')
+        print(self.deltafilters)
 
-        return self.deltaweights
+        return self.deltafilters
 
-    def updateWeight(self, learning_rate):
+    def updateFilters(self, learning_rate):
         self.cache = False
-        self.deltaweights = (self.deltaweights / (self.batchsize * self.batchperepoch)) * learning_rate
+        self.filters -= (self.deltafilters / (self.batchsize * self.batchperepoch)) * learning_rate
 
-        print('convolution weight:')
-        print(self.deltaweights)
+        print('convolution filters:')
+        print(self.filters)
+        print(self.deltafilters)
 
-        return self.deltaweights
+        return self.filters
