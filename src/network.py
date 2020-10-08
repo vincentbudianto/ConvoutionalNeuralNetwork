@@ -42,16 +42,11 @@ class Network:
         extractedImage = np.transpose(extractedImage[0],(2, 0, 1))
         self.convolution_layer.setInputs(np.array(extractedImage))
         self.convolution_layer.convolutionForward()
-
-        print("Forward convolution:", self.convolution_layer.outputs.shape)
-
         flatArray = self.flattening_layer.flatten(self.convolution_layer.outputs)
-        print("Forward flatten:", flatArray.shape)
-
         self.dense_layer.executeDenseLayer(flatArray)
-        print("Forward dense:", self.dense_layer.outputs.shape)
-
         self.output_layer.executeDenseLayer(self.dense_layer.outputs)
+
+        prediction = 0 if self.output_layer.outputs[0] >= self.output_layer.outputs[1] else 1
 
         ######################################
         #       BACKWARD PROPAGATION         #
@@ -60,14 +55,11 @@ class Network:
         ######################################
 
         d_out = self.output_layer.calcBackwards(label)
-        print(d_out)
         d_out2 = self.dense_layer.calcBackwards(d_out, self.output_layer.getweight())
-        print("Backwards dense:", d_out2.shape)
         d_flatten = self.flattening_layer.calcBackwards(d_out2, self.dense_layer.getweight())
-        print("Backwards flatten:", d_flatten.shape)
-
         d_convolution = self.convolution_layer.backward_propagation(d_flatten)
-        print("Backwards convolution:", d_convolution)
+
+        return prediction == label
 
     def update_weight(self, learning_rate):
         self.output_layer.updateWeight(learning_rate)
@@ -76,6 +68,7 @@ class Network:
 
     def train(self, directory, label, epoch, learning_rate, val_data, train_data):
         for i in range(epoch):
+            total_true = 0
             random.shuffle(train_data)
             imglist = train_data
 
@@ -89,10 +82,16 @@ class Network:
                 print('epoch ' + str(i) + '/' + str(epoch) + ' : batch ' + str(j) + '/' + str(self.batchperepoch))
 
                 for img in data:
-                    self.train_one(img, label)
+                    result = self.train_one(img, label)
+
+                    if result:
+                        total_true += 1
+
                     print("TRAIN DONE :", img)
 
             self.update_weight(learning_rate)
+            # print("Accuracy:", total_true / len(train_data))
+            print("Accuracy:", total_true / (self.batchperepoch * self.batchsize))
 
     def kfoldxvalidation(self, directory, label, epoch, learning_rate):
         listimg = []
