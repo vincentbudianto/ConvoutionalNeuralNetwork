@@ -65,7 +65,7 @@ class Network:
         print("Backwards flatten:", d_flatten.shape)
 
         d_convolution = self.convolution_layer.backward_propagation(d_flatten)
-        print("Backwards convolution:")
+        print("Backwards convolution:", d_convolution)
 
     def update_weight(self, learning_rate):
         self.output_layer.updateWeight(learning_rate)
