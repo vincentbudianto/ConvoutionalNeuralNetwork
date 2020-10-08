@@ -4,6 +4,7 @@ from denseLayer import DenseLayer
 from outputLayer import OutputLayer
 from flatten import FlatteningLayer
 import numpy as np
+import pandas as pd
 import pickle
 import os
 import random
@@ -77,19 +78,16 @@ class Network:
             print("Epoch done; Accuracy:", total_true / len(train_data))
 
     def kfoldxvalidation(self, directory, label, epoch, learning_rate):
-
         listimg = []
+        images = []
 
-        if directory:
-            os.chdir(directory)
-
-        files = os.listdir()
-
-        images = ([file for file in files if file.endswith(('jpg'))])
-
+        for subdir, dirs, files in os.walk(directory):
+            for file in files:
+                if file.endswith('jpg'):
+                    images.append(file)
 
         datas = (np.array_split(images, epoch))
-    
+
         for img in datas:
             listimg.append(list(img))
 
@@ -102,12 +100,9 @@ class Network:
 
             self.train(directory, label, epoch, learning_rate, img, flattened_datacopy)
 
-
-
-
 if __name__ == '__main__':
     curNetwork = Network()
-    curNetwork.kfoldxvalidation("test_data\cats", label=0, epoch=10, learning_rate=0.001)
+    curNetwork.kfoldxvalidation("test_data", label=0, epoch=10, learning_rate=0.001)
     # curNetwork.initiate_network(100, 2, 3, 2, 1, 'relu', 3, 1, 'AVG')
     # curNetwork.train("test_data\cats", label=0, epoch=10,  learning_rate=0.001)
     # #curNetwork.train_one("src\data\hololive29.jpg", 0)
