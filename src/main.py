@@ -3,77 +3,26 @@ from convolutionLayer import ConvolutionLayer
 from denseLayer import DenseLayer
 from outputLayer import OutputLayer
 from flatten import FlatteningLayer
+from network import Network
 import numpy as np
+import pickle 
 
-def test(fileName, convInputSize, convFilterCount, convFilterSize, convPaddingSize, convStrideSize, poolFilterSize, poolStrideSize, poolMode):
-    # np.set_printoptions(threshold=np.inf)
-    extractedImage = extractImage(fileName, True, convInputSize, convInputSize)
+def savemodel(network):
+    file_pi = open('latest_model.obj', 'w') 
+    pickle.dump(network, file_pi)
 
-    convolutionLayer = ConvolutionLayer()
-    convolutionLayer.setConfigurationDefault(convFilterCount, convFilterSize, convPaddingSize, convStrideSize, poolFilterSize, poolStrideSize, poolMode)
-    convolutionLayer.setInputs(np.array(extractedImage[0]))
-
-    convolutionLayer.convolutionForward()
-
-    print("CONVOLUTION LAYER RESULT")
-    print(convolutionLayer.outputs)
-
-    flatteningLayer = FlatteningLayer()
-
-    flatArray = flatteningLayer.flatten(convolutionLayer.outputs)
-
-    convshape = convolutionLayer.outputs.shape
-    print(convolutionLayer.outputs.shape)
-
-    denseLayer = DenseLayer(convshape[0] * convshape[1] * convshape[2], 1, 1, "relu")
-    denseLayer.initiateLayer()
-    denseLayer.executeDenseLayer(flatArray)
-
-    dens1shape = denseLayer.outputs.shape
-
-    outputLayer = OutputLayer(dens1shape[0], 1, 1)
-    outputLayer.initiateLayer()
-    outputLayer.executeDenseLayer(denseLayer.outputs)
-    print("OUTPUT RESULT")
-    print(outputLayer.outputs)
-
-    #BACKWARD PROPAGATION
-    #Consensus Output Node 0 = Cat
-    #Consensus Output Node 1 = Dog
-    # error = outputLayer.computeError(0)
-    d_out = outputLayer.calcBackwards(0)
-    d_out2 = denseLayer.calcBackwards(d_out, outputLayer.getweight())
-    d_out = outputLayer.calcBackwards(1)
-    d_out2 = denseLayer.calcBackwards(d_out, outputLayer.getweight())
-    d_out = outputLayer.calcBackwards(1)
-    d_out2 = denseLayer.calcBackwards(d_out, outputLayer.getweight())
-    d_out = outputLayer.calcBackwards(0)
-    d_out2 = denseLayer.calcBackwards(d_out, outputLayer.getweight())
-    d_out = outputLayer.calcBackwards(1)
-    d_out2 = denseLayer.calcBackwards(d_out, outputLayer.getweight())
-    d_out = outputLayer.calcBackwards(1)
-    d_out2 = denseLayer.calcBackwards(d_out, outputLayer.getweight())
-    d_out = outputLayer.calcBackwards(0)
-    d_out2 = denseLayer.calcBackwards(d_out, outputLayer.getweight())
-    d_out = outputLayer.calcBackwards(0)
-    d_out2 = denseLayer.calcBackwards(d_out, outputLayer.getweight())
-    d_out = outputLayer.calcBackwards(1)
-    d_out2 = denseLayer.calcBackwards(d_out, outputLayer.getweight())
-    d_out = outputLayer.calcBackwards(0)
-    d_out2 = denseLayer.calcBackwards(d_out, outputLayer.getweight())
-    outputLayer.updateWeight(0.001)
-    denseLayer.updateWeight(0.001)
-
-    print("METADATA")
-    print("D_OUT2")
-    print(d_out2)
-    print("WEIGHT")
-    print(denseLayer.getweight())
-    print(denseLayer.getweight().shape)
-    print("FLATLENGTH")
-    print(denseLayer.flatlength)
+def loadmodel():
+    filehandler = open('latest_model.obj', 'r') 
+    object = pickle.load(filehandler)
+    return(object)
 
 if __name__ == '__main__':
-    test("src\data\hololive29.jpg", 100, 2, 3, 2, 1, 3, 1, 'AVG')
+    curNetwork = Network()
+    curNetwork.initiate_network(100, 2, 3, 2, 1, 3, 1, 'AVG')
+    curNetwork.train_one("src\data\hololive29.jpg", 0)
+
+    savemodel(curNetwork)
+    loadedNetwork = loadmodel() 
+    # curNetwork.train("test_data\cats", label=0, epoch=10, batchsize=4, batchperepoch=1, learning_rate=0.001)
 
 
