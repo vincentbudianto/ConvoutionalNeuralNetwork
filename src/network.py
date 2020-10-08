@@ -111,13 +111,7 @@ class Network:
 
 if __name__ == '__main__':
     curNetwork = Network()
-<<<<<<< HEAD
     curNetwork.kfoldxvalidation("test_data\cats", label=0, epoch=10, learning_rate=0.001)
     # curNetwork.initiate_network(100, 2, 3, 2, 1, 'relu', 3, 1, 'AVG')
     # curNetwork.train("test_data\cats", label=0, epoch=10,  learning_rate=0.001)
     # #curNetwork.train_one("src\data\hololive29.jpg", 0)
-=======
-    curNetwork.initiate_network(1, 1, 100, 2, 3, 2, 1, 3, 1, 'AVG')
-    curNetwork.train("test_data\cats", label=0, epoch=10, batchsize=4, batchperepoch=1, learning_rate=0.001)
-    #curNetwork.train_one("src\data\hololive29.jpg", 0)
->>>>>>> 285b95f83221dae6d799c799c4d9985cf41213a3
