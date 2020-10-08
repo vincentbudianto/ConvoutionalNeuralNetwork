@@ -15,6 +15,12 @@ class Dense:
     def activate(self):
         return self.forward_activation(self.sigma)
 
+    def get_weight_with_bias(self):
+        return np.append(self.weightarray, self.bias)
+
+    def get_weight(self):
+        return self.weightarray
+
     ###ACTIVATION FUNCTIONS###
     def forward_activation(self, X):
         if self.activation_function == "sigmoid":

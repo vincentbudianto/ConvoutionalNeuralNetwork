@@ -26,7 +26,7 @@ def test(fileName, convInputSize, convFilterCount, convFilterSize, convPaddingSi
     convshape = convolutionLayer.outputs.shape
     print(convolutionLayer.outputs.shape)
 
-    denseLayer = DenseLayer(convshape[0] * convshape[1] * convshape[2])
+    denseLayer = DenseLayer(convshape[0] * convshape[1] * convshape[2], 1, 1, "relu")
     denseLayer.initiateLayer()
     denseLayer.executeDenseLayer(flatArray)
 
@@ -41,11 +41,40 @@ def test(fileName, convInputSize, convFilterCount, convFilterSize, convPaddingSi
     #BACKWARD PROPAGATION
     #Consensus Output Node 0 = Cat
     #Consensus Output Node 1 = Dog
-    error = outputLayer.computeError(0)
-    outputLayer.calcBackwards(0)
+    # error = outputLayer.computeError(0)
+    d_out = outputLayer.calcBackwards(0)
+    d_out2 = denseLayer.calcBackwards(d_out, outputLayer.getweight())
+    d_out = outputLayer.calcBackwards(1)
+    d_out2 = denseLayer.calcBackwards(d_out, outputLayer.getweight())
+    d_out = outputLayer.calcBackwards(1)
+    d_out2 = denseLayer.calcBackwards(d_out, outputLayer.getweight())
+    d_out = outputLayer.calcBackwards(0)
+    d_out2 = denseLayer.calcBackwards(d_out, outputLayer.getweight())
+    d_out = outputLayer.calcBackwards(1)
+    d_out2 = denseLayer.calcBackwards(d_out, outputLayer.getweight())
+    d_out = outputLayer.calcBackwards(1)
+    d_out2 = denseLayer.calcBackwards(d_out, outputLayer.getweight())
+    d_out = outputLayer.calcBackwards(0)
+    d_out2 = denseLayer.calcBackwards(d_out, outputLayer.getweight())
+    d_out = outputLayer.calcBackwards(0)
+    d_out2 = denseLayer.calcBackwards(d_out, outputLayer.getweight())
+    d_out = outputLayer.calcBackwards(1)
+    d_out2 = denseLayer.calcBackwards(d_out, outputLayer.getweight())
+    d_out = outputLayer.calcBackwards(0)
+    d_out2 = denseLayer.calcBackwards(d_out, outputLayer.getweight())
     outputLayer.updateWeight(0.001)
+    denseLayer.updateWeight(0.001)
+
+    print("METADATA")
+    print("D_OUT2")
+    print(d_out2)
+    print("WEIGHT")
+    print(denseLayer.getweight())
+    print(denseLayer.getweight().shape)
+    print("FLATLENGTH")
+    print(denseLayer.flatlength)
 
 if __name__ == '__main__':
-    test("soberu.png", 200, 3, 3, 2, 1, 'relu', 3, 1, 'AVG')
+    test("src\data\hololive29.jpg", 200, 3, 3, 2, 1, 'relu', 3, 1, 'AVG')
 
 
