@@ -55,6 +55,8 @@ class OutputLayer:
         else:
             self.deltaweights = newweight
             self.cache = True
+        
+        return phase1
 
     def updateWeight(self, learningrate):
 
@@ -62,9 +64,20 @@ class OutputLayer:
 
         self.deltaweights = (self.deltaweights / (self.batchsize * self.batchperepoch)) * learningrate
 
+        print("DERUTAAA OURPUT")
+        print(self.deltaweights.shape)
+        
         for i, node in enumerate(self.denseNodes):
             node.updateWeight(self.deltaweights[i])
 
+    def getweight(self):
+
+        allweight = []
+
+        for nodes in self.denseNodes:
+            allweight.append(nodes.get_weight())
+        
+        return np.array(allweight)
 
 
 
