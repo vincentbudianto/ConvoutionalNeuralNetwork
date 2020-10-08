@@ -16,16 +16,16 @@ class Network:
 
         self.convInputSize = None
 
-    def initiate_network(self, convInputSize, convFilterCount, convFilterSize, convPaddingSize, convStrideSize, poolFilterSize, poolStrideSize, detectorMode, poolMode, activation_dense="relu"):
+    def initiate_network(self, batchsize, batchperepoch, convInputSize, convFilterCount, convFilterSize, convPaddingSize, convStrideSize, poolFilterSize, poolStrideSize, detectorMode, poolMode, activation_dense="relu"):
 
         self.convInputSize = convInputSize
 
         self.convolution_layer = ConvolutionLayer()
-        self.convolution_layer.setConfigurationDefault(convFilterCount, convFilterSize, convPaddingSize, convStrideSize, detectorMode, poolFilterSize, poolStrideSize, poolMode)
+        self.convolution_layer.setConfigurationDefault(batchsize, batchperepoch, convFilterCount, convFilterSize, convPaddingSize, convStrideSize, detectorMode, poolFilterSize, poolStrideSize, poolMode)
 
         self.flattening_layer = FlatteningLayer()
 
-        self.dense_layer = DenseLayer(convInputSize * convInputSize * convFilterCount, 1, 1, activation_dense)
+        self.dense_layer = DenseLayer(convInputSize * convInputSize * convFilterCount, batchsize, batchperepoch, activation_dense)
         self.dense_layer.initiateLayer()
 
         self.output_layer = OutputLayer(10, 1, 1)
@@ -56,6 +56,7 @@ class Network:
     def update_weight(self, learning_rate):
         self.output_layer.updateWeight(learning_rate)
         self.dense_layer.updateWeight(learning_rate)
+        self.convolution_layer.updateWeight(learning_rate)
 
     def train(self, directory, label, epoch, batchsize, batchperepoch, learning_rate):
 
