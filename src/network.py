@@ -16,7 +16,7 @@ class Network:
 
         self.convInputSize = None
 
-    def initiate_network(self, batchsize, batchperepoch, convInputSize, convFilterCount, convFilterSize, convPaddingSize, convStrideSize, poolFilterSize, poolStrideSize, detectorMode, poolMode, activation_dense="relu"):
+    def initiate_network(self, batchsize, batchperepoch, convInputSize, convFilterCount, convFilterSize, convPaddingSize, convStrideSize, detectorMode, poolFilterSize, poolStrideSize, poolMode, activation_dense="relu"):
 
         self.convInputSize = convInputSize
 
