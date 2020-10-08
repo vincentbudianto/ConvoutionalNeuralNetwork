@@ -106,7 +106,7 @@ class ConvolutionLayer:
             # cv2.imwrite(outputName, convolutionResult)
 
             # Detection
-            if (self.detector[i].getBias() == None):
+            if (self.detector[i].getBias() is None):
                 self.detector[i].setBias(convolutionResult)
             self.detector[i].input = convolutionResult
             detectionResult = self.detector[i].activate()
