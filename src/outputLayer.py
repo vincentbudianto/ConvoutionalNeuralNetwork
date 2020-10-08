@@ -63,9 +63,6 @@ class OutputLayer:
         self.cache = False
 
         self.deltaweights = (self.deltaweights / (self.batchsize * self.batchperepoch)) * learningrate
-
-        print("DERUTAAA OURPUT")
-        print(self.deltaweights.shape)
         
         for i, node in enumerate(self.denseNodes):
             node.updateWeight(self.deltaweights[i])
