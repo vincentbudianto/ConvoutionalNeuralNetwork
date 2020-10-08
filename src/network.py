@@ -70,7 +70,7 @@ class Network:
     def update_weight(self, learning_rate):
         self.output_layer.updateWeight(learning_rate)
         self.dense_layer.updateWeight(learning_rate)
-        self.convolution_layer.updateFilters(learning_rate)
+        self.convolution_layer.updateWeight(learning_rate)
 
     def train(self, directory, label, epoch, batchsize, batchperepoch, learning_rate):
 

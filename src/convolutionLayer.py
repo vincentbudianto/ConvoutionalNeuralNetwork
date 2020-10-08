@@ -134,11 +134,12 @@ class ConvolutionLayer:
         delta_pooling = pooling.back_propagation(delta_matrix)
         delta_detector = detector.back_propagation(delta_pooling)
         delta_convolution = convolution.back_propagation(delta_detector)
-        # print('delta_convolution', delta_convolution)
+        print('delta_convolution:\n', delta_convolution)
+        print('shape:', delta_convolution.shape)
 
     def updateWeight(self, learning_rate):
         for i in range(len(self.convolution)):
-            self.convolution[i].updateWeight(learning_rate)
+            self.convolution[i].updateFilters(learning_rate)
 
 if __name__ == "__main__":
     print("Testing convolutional layer")

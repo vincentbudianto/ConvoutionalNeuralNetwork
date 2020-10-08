@@ -16,7 +16,7 @@ class Convolution:
             self.image = np.transpose(image,(2, 0, 1))
 
         if filters is None and image is not None:
-            h, w, t = image.shape
+            t, h, w = image.shape
             self.numFilters = t
             self.filters = np.random.randn(t, filterSizeH, filterSizeW) / (filterSizeH * filterSizeW)
         elif filters is not None:
@@ -32,7 +32,7 @@ class Convolution:
         self.image = image
 
         if image is not None:
-            h, w, t = image.shape
+            t, h, w = image.shape
             self.filters = np.random.randn(t, self.filterSizeH, self.filterSizeW) / (self.filterSizeH * self.filterSizeW)
             self.numFilters = t
 
@@ -68,7 +68,7 @@ class Convolution:
 
         return result
 
-    def forwardExtract(self, padding):
+    def Extract(self, padding):
         h, w = padding.shape
 
         for i in range(0, (h - (self.filterSizeH - self.strideSize)), self.strideSize):
@@ -86,7 +86,7 @@ class Convolution:
             paddingLayer = self.output[k]
             result = np.zeros(paddingLayer.shape)
 
-            for curr_region, i, j in self.forwardExtract(paddingLayer):
+            for curr_region, i, j in self.Extract(paddingLayer):
                 curr_result = np.tensordot(curr_region, self.filters[k])
                 result[i, j] = np.sum(curr_result)
 
@@ -99,25 +99,27 @@ class Convolution:
 
         return totalResult
 
-    def backwardExtract(self, padding, sizeH, sizeW):
-        h, w = padding.shape
-
-        for i in range(0, (h - (sizeH - self.strideSize)), self.strideSize):
-            for j in range(0, (w - (sizeW - self.strideSize)), self.strideSize):
-                region = padding[i:(i + sizeH), j:(j + sizeW)]
-
-                if (region.shape[0] == sizeH and region.shape[1] == sizeW):
-                    yield region, i, j
-
     def back_propagation(self, delta_matrix):
-        filters = np.zeros(delta_matrix.shape)
-        h, w = filters.shape
+        print('\n\nCONV BACKPROP\n')
+        filters = np.zeros(self.filters.shape)
+        # print('filters:\n', filters)
+        print(self.numFilters)
+        print('filters shape:', filters.shape)
+        # print('delta_matrix:\n', delta_matrix)
+        print('delta_matrix shape:', delta_matrix.shape)
 
         for k in range(len(self.output)):
             paddingLayer = self.output[k]
 
-            for curr_region, i, j in self.backwardExtract(paddingLayer, w, h):
+            for curr_region, i, j in self.Extract(paddingLayer):
+                # print(' region (' + str(i) + ',' + str(j) + ') :\n', curr_region)
+                # print('  shape:', curr_region.shape)
+                # print('  delta (' + str(i) + ',' + str(j) + ') :', delta_matrix[i, j])
+
                 filters += delta_matrix[i, j] * curr_region
+
+                # print('filters (' + str(i) + ',' + str(j) + ') :', filters)
+                # print('  shape:', filters.shape)
 
         if self.cache:
             self.deltafilters = self.deltafilters + filters
@@ -126,7 +128,8 @@ class Convolution:
             self.cache = True
 
         print('convolution filters:')
-        print(self.deltafilters)
+        # print(self.deltafilters)
+        print('  shape:', self.deltafilters.shape)
 
         return self.deltafilters
 
