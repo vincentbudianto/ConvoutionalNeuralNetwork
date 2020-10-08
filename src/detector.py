@@ -42,12 +42,14 @@ class Detector:
     def back_propagation(self, delta_matrix):
         if self.activation_function == "sigmoid":
             ones = np.zeros(delta_matrix.shape) + 1
-            return delta_matrix * (ones - delta_matrix)
+            result = delta_matrix * (ones - delta_matrix)
         elif self.activation_function == "tanh":
             ones = np.zeros(delta_matrix.shape) + 1
-            return ones - np.square(np.tanh(delta_matrix))
+            result = ones - np.square(np.tanh(delta_matrix))
         elif self.activation_function == "relu":
-            return [[1 if col > 0 else 0 for col in row] for row in delta_matrix]
+            result = np.array([[1 if col > 0 else 0 for col in row] for row in delta_matrix])
+        
+        return np.multiply(result, delta_matrix)
 
 if __name__ == "__main__":
     print("Testing numpy detector layer")
