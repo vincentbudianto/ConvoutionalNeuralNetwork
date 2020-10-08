@@ -19,7 +19,8 @@ class Network:
         self.convInputSize = None
 
     def initiate_network(self, batchsize, batchperepoch, convInputSize, convFilterCount, convFilterSize, convPaddingSize, convStrideSize, detectorMode, poolFilterSize, poolStrideSize, poolMode, activation_dense="relu"):
-
+        self.batchsize = batchsize
+        self.batchperepoch = batchperepoch
         self.convInputSize = convInputSize
 
         self.convolution_layer = ConvolutionLayer()
@@ -74,11 +75,23 @@ class Network:
         self.convolution_layer.updateWeight(learning_rate)
 
     def train(self, directory, label, epoch, learning_rate, val_data, train_data):
+        for i in range(epoch):
+            random.shuffle(train_data)
+            imglist = train_data
 
-        for _ in range(epoch):
-            for img in train_data:
-                self.train_one(img, label)
-                print("TRAIN DONE : ", img)
+            for j in range(self.batchperepoch):
+                data = []
+
+                for _ in range(self.batchsize):
+                    if (len(imglist) > 0):
+                        data.append(imglist.pop(0))
+
+                print('epoch ' + str(i) + '/' + str(epoch) + ' : batch ' + str(j) + '/' + str(self.batchperepoch))
+
+                for img in data:
+                    self.train_one(img, label)
+                    print("TRAIN DONE :", img)
+
             self.update_weight(learning_rate)
 
     def kfoldxvalidation(self, directory, label, epoch, learning_rate):
@@ -88,9 +101,9 @@ class Network:
         for subdir, dirs, files in os.walk(directory):
             for file in files:
                 if file.endswith('jpg'):
-                    images.append(file)
+                    images.append(os.path.join.(subdir, file))
 
-        datas = (np.array_split(images, epoch))
+        datas = np.array_split(images, epoch)
 
         for img in datas:
             listimg.append(list(img))
