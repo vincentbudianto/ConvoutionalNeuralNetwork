@@ -77,19 +77,19 @@ def test(fileName, convInputSize, convFilterCount, convFilterSize, convPaddingSi
     print(denseLayer.flatlength)
 
 def savemodel(network):
-    file_pi = open('latest_model.obj', 'w')
+    file_pi = open('latest_model.obj', 'wb')
     pickle.dump(network, file_pi)
 
 def loadmodel():
-    filehandler = open('latest_model.obj', 'r')
+    filehandler = open('latest_model.obj', 'rb')
     object = pickle.load(filehandler)
     return(object)
 
 if __name__ == '__main__':
     curNetwork = Network()
-    curNetwork.initiate_network(100, 2, 3, 2, 1, 'relu', 3, 1, 'AVG')
-    curNetwork.train_one("data/hololive29.jpg", 0)
-    
+    curNetwork.initiate_network(1, 1, 100, 2, 3, 2, 1, 'relu', 3, 1, 'AVG')
+    curNetwork.train_one("src\data\hololive29.jpg", 0)
+
     savemodel(curNetwork)
     loadedNetwork = loadmodel()
     # test("src\data\hololive29.jpg", 200, 3, 3, 2, 1, 'relu', 3, 1, 'AVG')

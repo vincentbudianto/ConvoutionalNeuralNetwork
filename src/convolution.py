@@ -1,11 +1,16 @@
 import numpy as np
 
 class Convolution:
-    def __init__(self, image = None, paddingSize = 2, filterSizeH = 3, filterSizeW = 3, strideSize = 1, filters = None):
+    def __init__(self, batchsize, batchperepoch, image = None, paddingSize = 2, filterSizeH = 3, filterSizeW = 3, strideSize = 1, filters = None):
         self.paddingSize = paddingSize
         self.strideSize = strideSize
         self.filterSizeH = filterSizeH
         self.filterSizeW = filterSizeW
+
+        self.batchsize = batchsize
+        self.batchperepoch = batchperepoch
+        self.cache = False
+        self.deltaweights = None
 
         if image is not None:
             self.image = np.transpose(image,(2, 0, 1))
@@ -114,4 +119,22 @@ class Convolution:
             for curr_region, i, j in self.backwardExtract(paddingLayer, w, h):
                 weight += delta_matrix[i, j] * curr_region
 
-        return weight
+        if self.cache:
+            self.deltaweights = self.deltaweights + weight
+        else:
+            self.deltaweights = weight
+            self.cache = True
+
+        print('convolution weight:')
+        print(self.deltaweights)
+
+        return self.deltaweights
+
+    def updateWeight(self, learningrate):
+        self.cache = False
+        self.deltaweights = (self.deltaweights / (self.batchsize * self.batchperepoch)) * learningrate
+
+        print('convolution weight:')
+        print(self.deltaweights)
+
+        return self.deltaweights

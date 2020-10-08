@@ -71,12 +71,12 @@ class ConvolutionLayer:
     - 3 detectors
     - 3 poolings
     """
-    def setConfigurationDefault(self, convFilterCount, convFilterSize, convPaddingSize, convStrideSize, detectorMode, poolFilterSize, poolStrideSize, poolMode):
+    def setConfigurationDefault(self, batchsize, batchperepoch, convFilterCount, convFilterSize, convPaddingSize, convStrideSize, detectorMode, poolFilterSize, poolStrideSize, poolMode):
         # Convolution
         convolutionList = []
         for i in range(convFilterCount):
             dummyFilter = np.array([[[-1, 0, 1], [-2, 0, 2], [-1, 0, 1]],[[-1, 0, 1], [-2, 0, 2], [-1, 0, 1]],[[-1, 0, 1], [-2, 0, 2], [-1, 0, 1]]])
-            convolutionList.append(Convolution(None, convPaddingSize, convFilterSize, convFilterSize, convStrideSize, filters = None))
+            convolutionList.append(Convolution(batchsize, batchperepoch, None, convPaddingSize, convFilterSize, convFilterSize, convStrideSize, filters = None))
         self.convolution = convolutionList
 
         # Detector
@@ -130,11 +130,15 @@ class ConvolutionLayer:
             print("Backprop other than 3D is not implemented yet")
 
 
-    def backward_node(self, delta_matrix, convolution, detector, pooling, learning_rate):
+    def backward_node(self, delta_matrix, convolution, detector, pooling):
         delta_pooling = pooling.back_propagation(delta_matrix)
         delta_detector = detector.back_propagation(delta_pooling)
         delta_convolution = convolution.back_propagation(delta_detector, learning_rate)
         print('delta_convolution', delta_convolution)
+
+    def updateWeight(self, learning_rate):
+        for i in range(len(self.convolution)):
+            self.convolution[i].updateWeight(learning_rate)
 
 if __name__ == "__main__":
     print("Testing convolutional layer")
@@ -148,7 +152,7 @@ if __name__ == "__main__":
     print("Input shape:", test_forward_matrix.shape)
 
     convolution_layer = ConvolutionLayer()
-    convolution_layer.setConfigurationDefault(convFilterCount=3, convFilterSize=3, convPaddingSize=1, convStrideSize=1, \
+    convolution_layer.setConfigurationDefault(1, 1, convFilterCount=3, convFilterSize=3, convPaddingSize=1, convStrideSize=1, \
     detectorMode='relu', poolFilterSize=2, poolStrideSize=2, poolMode='MAX')
     convolution_layer.setInputs(test_forward_matrix)
 
