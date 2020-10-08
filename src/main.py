@@ -8,11 +8,11 @@ import numpy as np
 import pickle 
 
 def savemodel(network):
-    file_pi = open('latest_model.obj', 'w') 
+    file_pi = open('latest_model.obj', 'wb') 
     pickle.dump(network, file_pi)
 
 def loadmodel():
-    filehandler = open('latest_model.obj', 'r') 
+    filehandler = open('latest_model.obj', 'rb') 
     object = pickle.load(filehandler)
     return(object)
 
