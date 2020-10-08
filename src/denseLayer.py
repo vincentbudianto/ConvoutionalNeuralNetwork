@@ -59,7 +59,7 @@ class DenseLayer:
             self.deltaweights = newweight
             self.cache = True
 
-        return phase1
+        return phase2
 
 
     def updateWeight(self, learningrate):

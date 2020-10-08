@@ -71,12 +71,12 @@ class ConvolutionLayer:
     - 3 detectors
     - 3 poolings
     """
-    def setConfigurationDefault(self, convFilterCount, convFilterSize, convPaddingSize, convStrideSize, detectorMode, poolFilterSize, poolStrideSize, poolMode):
+    def setConfigurationDefault(self, batchsize, batchperepoch, convFilterCount, convFilterSize, convPaddingSize, convStrideSize, detectorMode, poolFilterSize, poolStrideSize, poolMode):
         # Convolution
         convolutionList = []
         for i in range(convFilterCount):
             dummyFilter = np.array([[[-1, 0, 1], [-2, 0, 2], [-1, 0, 1]],[[-1, 0, 1], [-2, 0, 2], [-1, 0, 1]],[[-1, 0, 1], [-2, 0, 2], [-1, 0, 1]]])
-            convolutionList.append(Convolution(None, convPaddingSize, convFilterSize, convFilterSize, convStrideSize, filters = None))
+            convolutionList.append(Convolution(batchsize, batchperepoch, None, convPaddingSize, convFilterSize, convFilterSize, convStrideSize, filters = None))
         self.convolution = convolutionList
 
         # Detector
@@ -121,22 +121,25 @@ class ConvolutionLayer:
     Backward Propagation
     Process the delta error matrix update delta_weight matrix
     """
-    def backward_propagation(self, delta_matrix, learning_rate):
+    def backward_propagation(self, delta_matrix):
         if len(delta_matrix.shape) == 3:
             c = delta_matrix.shape[0]
             for i in range(c):
-                self.backward_node(delta_matrix[i], self.convolution[i], self.detector[i], self.pooling[i], learning_rate)
+                self.backward_node(delta_matrix[i], self.convolution[i], self.detector[i], self.pooling[i])
         else:
             print("Backprop other than 3D is not implemented yet")
 
 
-    def backward_node(self, delta_matrix, convolution, detector, pooling, learning_rate):
+    def backward_node(self, delta_matrix, convolution, detector, pooling):
         delta_pooling = pooling.back_propagation(delta_matrix)
-        print('delta_pooling', delta_pooling)
         delta_detector = detector.back_propagation(delta_pooling)
-        print('delta_detector', delta_detector)
-        delta_convolution = convolution.back_propagation(delta_detector, learning_rate)
-        print('delta_convolution', delta_convolution)
+        delta_convolution = convolution.back_propagation(delta_detector)
+        print('delta_convolution:\n', delta_convolution)
+        print('shape:', delta_convolution.shape)
+
+    def updateWeight(self, learning_rate):
+        for i in range(len(self.convolution)):
+            self.convolution[i].updateFilters(learning_rate)
 
 if __name__ == "__main__":
     print("Testing convolutional layer")
@@ -150,7 +153,7 @@ if __name__ == "__main__":
     print("Input shape:", test_forward_matrix.shape)
 
     convolution_layer = ConvolutionLayer()
-    convolution_layer.setConfigurationDefault(convFilterCount=3, convFilterSize=3, convPaddingSize=1, convStrideSize=1, \
+    convolution_layer.setConfigurationDefault(1, 1, convFilterCount=3, convFilterSize=3, convPaddingSize=1, convStrideSize=1, \
     detectorMode='relu', poolFilterSize=2, poolStrideSize=2, poolMode='MAX')
     convolution_layer.setInputs(test_forward_matrix)
 
@@ -166,7 +169,7 @@ if __name__ == "__main__":
     test_backward_matrix = np.array(test_backward_matrix)
     print("Input shape:", test_backward_matrix.shape)
 
-    convolution_layer.backward_propagation(test_backward_matrix, 0.3)
+    convolution_layer.backward_propagation(test_backward_matrix)
 
 
 

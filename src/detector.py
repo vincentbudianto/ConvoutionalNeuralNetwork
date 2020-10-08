@@ -6,6 +6,7 @@ class Detector:
         self.activation_function = activation_function
         self.leaky_slope = leaky_slope
         self.bias = None
+        self.outputs = None
 
     def activate(self):
         h, w = self.input.shape
@@ -15,7 +16,8 @@ class Detector:
         for i in range(h):
             for j in range(w):
                 result[i][j] = self.forward_activation(self.input[i][j] + self.bias[i][j])
-
+        
+        self.outputs = result
         return result
 
     def getBias(self):
@@ -41,13 +43,13 @@ class Detector:
 
     def back_propagation(self, delta_matrix):
         if self.activation_function == "sigmoid":
-            ones = np.zeros(delta_matrix.shape) + 1
-            result = delta_matrix * (ones - delta_matrix)
+            ones = np.zeros(self.outputs.shape) + 1
+            result = self.outputs * (ones - self.outputs)
         elif self.activation_function == "tanh":
-            ones = np.zeros(delta_matrix.shape) + 1
-            result = ones - np.square(np.tanh(delta_matrix))
+            ones = np.zeros(self.outputs.shape) + 1
+            result = ones - np.square(np.tanh(self.outputs))
         elif self.activation_function == "relu":
-            result = np.array([[1 if col > 0 else 0 for col in row] for row in delta_matrix])
+            result = np.array([[1 if col > 0 else 0 for col in row] for row in self.outputs])
         
         return np.multiply(result, delta_matrix)
 

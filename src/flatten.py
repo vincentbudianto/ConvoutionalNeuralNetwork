@@ -22,6 +22,10 @@ class FlatteningLayer:
             print("Flattening layer not initiated")
             return None
         return featuremap.reshape((self.size_x, self.size_y, self.size_z))
+    
+    def calcBackwards(self, d_succ, weight_succ):
+        phase1 = (np.matmul(d_succ[np.newaxis], weight_succ))
+        return self.unflatten(phase1)
 
 if __name__ == "__main__":
     print("Testing numpy flatten and unflatten")
