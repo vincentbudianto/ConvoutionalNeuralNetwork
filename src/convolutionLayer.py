@@ -135,8 +135,6 @@ class ConvolutionLayer:
         delta_detector = detector.back_propagation(delta_pooling)
         delta_convolution = convolution.back_propagation(delta_detector)
 
-        print("Result =", delta_convolution)
-
     def updateWeight(self, learning_rate):
         for i in range(len(self.convolution)):
             self.convolution[i].updateFilters(learning_rate)

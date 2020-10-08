@@ -123,8 +123,4 @@ class Convolution:
         self.cache = False
         self.filters -= ((self.deltafilters / (self.batchsize * self.batchperepoch)) * learning_rate)
 
-        print('convolution filters:')
-        print(self.filters)
-        print(self.deltafilters)
-
         return self.filters
