@@ -121,11 +121,11 @@ class ConvolutionLayer:
     Backward Propagation
     Process the delta error matrix update delta_weight matrix
     """
-    def backward_propagation(self, delta_matrix, learning_rate):
+    def backward_propagation(self, delta_matrix):
         if len(delta_matrix.shape) == 3:
             c = delta_matrix.shape[0]
             for i in range(c):
-                self.backward_node(delta_matrix[i], self.convolution[i], self.detector[i], self.pooling[i], learning_rate)
+                self.backward_node(delta_matrix[i], self.convolution[i], self.detector[i], self.pooling[i])
         else:
             print("Backprop other than 3D is not implemented yet")
 
@@ -134,7 +134,7 @@ class ConvolutionLayer:
         delta_pooling = pooling.back_propagation(delta_matrix)
         delta_detector = detector.back_propagation(delta_pooling)
         delta_convolution = convolution.back_propagation(delta_detector)
-        print('delta_convolution', delta_convolution)
+        # print('delta_convolution', delta_convolution)
 
     def updateWeight(self, learning_rate):
         for i in range(len(self.convolution)):
@@ -168,7 +168,7 @@ if __name__ == "__main__":
     test_backward_matrix = np.array(test_backward_matrix)
     print("Input shape:", test_backward_matrix.shape)
 
-    convolution_layer.backward_propagation(test_backward_matrix, 0.3)
+    convolution_layer.backward_propagation(test_backward_matrix)
 
 
 

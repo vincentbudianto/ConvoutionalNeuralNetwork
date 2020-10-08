@@ -24,28 +24,8 @@ class FlatteningLayer:
         return featuremap.reshape((self.size_x, self.size_y, self.size_z))
     
     def calcBackwards(self, d_succ, weight_succ):
-
-        #derivative function
-        d_func = self.d_func()
-
-        #add bias
-        valuearr = np.array(self.flatArray)
-        valuearr = np.append(valuearr, 1)
-
-        phase1 = (np.matmul(d_succ[np.newaxis], weight_succ)) 
-        derivoutput = np.array([d_func(x2) for x2 in self.outputs])
-
-        phase2 = np.multiply(phase1, derivoutput)
-
-        newweight = np.array((np.matmul(phase2.reshape(-1,1), valuearr[np.newaxis])))
-
-        if self.cache:
-            self.deltaweights = self.deltaweights + newweight
-        else:
-            self.deltaweights = newweight
-            self.cache = True
-
-        return phase2
+        phase1 = (np.matmul(d_succ[np.newaxis], weight_succ))
+        return self.unflatten(phase1)
 
 if __name__ == "__main__":
     print("Testing numpy flatten and unflatten")
