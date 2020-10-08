@@ -123,4 +123,11 @@ class Convolution:
                 print(i, j, '-->', curr_region)
                 weight += delta_matrix[i, j] * curr_region
 
-        return weight
+        print('convolution weight:')
+        print(weight)
+
+        totalWeight = weight * learning_rate
+        print('convolution totalWeight:')
+        print(totalWeight)
+
+        return totalWeight
