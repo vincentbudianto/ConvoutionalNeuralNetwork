@@ -105,22 +105,13 @@ class Convolution:
                     yield region, i, j
 
     def back_propagation(self, delta_matrix, learning_rate):
-        print('CONV back_propagation')
-        print('delta_matrix:')
-        print(delta_matrix)
         weight = np.zeros(delta_matrix.shape)
         h, w = weight.shape
-        print('weight:')
-        print(weight)
 
         for k in range(len(self.output)):
             paddingLayer = self.output[k]
-            print('paddingLayer:')
-            print(paddingLayer)
 
-            print('ITERATION')
             for curr_region, i, j in self.backwardExtract(paddingLayer, w, h):
-                print(i, j, '-->', curr_region)
                 weight += delta_matrix[i, j] * curr_region
 
         return weight

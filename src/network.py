@@ -16,7 +16,7 @@ class Network:
 
         self.convInputSize = None
 
-    def initiate_network(self, convInputSize, convFilterCount, convFilterSize, convPaddingSize, convStrideSize, poolFilterSize, poolStrideSize, detectorMode, poolMode, activation_dense="relu"):
+    def initiate_network(self, convInputSize, convFilterCount, convFilterSize, convPaddingSize, convStrideSize, detectorMode, poolFilterSize, poolStrideSize, poolMode, activation_dense="relu"):
 
         self.convInputSize = convInputSize
 
@@ -36,7 +36,8 @@ class Network:
         #IMAGE LOAD & FORWARD PROPAGATION#
         ##################################
         extractedImage = extractImage(fileName, True, self.convInputSize, self.convInputSize)
-        self.convolution_layer.setInputs(np.array(extractedImage[0]))
+        extractedImage = np.transpose(extractedImage[0],(2, 0, 1))
+        self.convolution_layer.setInputs(np.array(extractedImage))
         self.convolution_layer.convolutionForward()
 
         flatArray = self.flattening_layer.flatten(self.convolution_layer.outputs)

@@ -132,9 +132,7 @@ class ConvolutionLayer:
 
     def backward_node(self, delta_matrix, convolution, detector, pooling, learning_rate):
         delta_pooling = pooling.back_propagation(delta_matrix)
-        print('delta_pooling', delta_pooling)
         delta_detector = detector.back_propagation(delta_pooling)
-        print('delta_detector', delta_detector)
         delta_convolution = convolution.back_propagation(delta_detector, learning_rate)
         print('delta_convolution', delta_convolution)
 
