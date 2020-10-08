@@ -1,12 +1,10 @@
 from scipy.special import softmax
 import numpy as np
 
-valuearr = np.array([2, 3, 5])
-valuearr2 = np.array(np.array([5, 3, 2]))
+valuearr = np.array([[[2, 3, 5],[2, 3, 4]],[[2, 3, 1], [2, 3, 3]]])
 
-print(valuearr - valuearr2)
-print(np.append(valuearr, 5))
-print(valuearr)
+print(valuearr.shape)
+print(valuearr[0].shape)
 # newweight = []
 # deltaweights = None
 # popog = []

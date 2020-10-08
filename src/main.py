@@ -5,13 +5,14 @@ from outputLayer import OutputLayer
 from flatten import FlatteningLayer
 import numpy as np
 
-def test(fileName, convInputSize, convFilterCount, convFilterSize, convPaddingSize, convStrideSize, poolFilterSize, poolStrideSize, poolMode):
+def test(fileName, convInputSize, convFilterCount, convFilterSize, convPaddingSize, convStrideSize, detectorMode, poolFilterSize, poolStrideSize, poolMode):
     # np.set_printoptions(threshold=np.inf)
     extractedImage = extractImage(fileName, True, convInputSize, convInputSize)
+    extractedImage = np.transpose(extractedImage[0],(2, 0, 1))
 
     convolutionLayer = ConvolutionLayer()
-    convolutionLayer.setConfigurationDefault(convFilterCount, convFilterSize, convPaddingSize, convStrideSize, poolFilterSize, poolStrideSize, poolMode)
-    convolutionLayer.setInputs(np.array(extractedImage[0]))
+    convolutionLayer.setConfigurationDefault(convFilterCount, convFilterSize, convPaddingSize, convStrideSize, detectorMode, poolFilterSize, poolStrideSize, poolMode)
+    convolutionLayer.setInputs(np.array(extractedImage))
 
     convolutionLayer.convolutionForward()
 
@@ -45,6 +46,6 @@ def test(fileName, convInputSize, convFilterCount, convFilterSize, convPaddingSi
     outputLayer.updateWeight(0.001)
 
 if __name__ == '__main__':
-    test("src\soberu.png", 200, 2, 3, 2, 1, 3, 1, 'AVG')
+    test("soberu.png", 200, 3, 3, 2, 1, 'relu', 3, 1, 'AVG')
 
 

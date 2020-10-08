@@ -116,7 +116,6 @@ class Pooling:
         while (startPosition[0] + self.__filterHeight) <= self.shape_x:
             j = 0
             while (startPosition[1] + self.__filterWidth) <= self.shape_y:
-                print(i, j)
                 delta_pos = delta_matrix[i][j]
                 partitioned = result[startPosition[0] : startPosition[0] + self.__filterHeight, startPosition[1] : startPosition[1] + self.__filterWidth]
                 if (self.__mode == 'MAX'):
