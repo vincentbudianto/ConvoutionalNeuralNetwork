@@ -38,7 +38,7 @@ class Detector:
         self.sigma = input
         return self.activate()
 
-    
+
     def back_propagation(self, delta_matrix):
         if self.activation_function == "sigmoid":
             ones = np.zeros(delta_matrix.shape) + 1
@@ -71,7 +71,7 @@ if __name__ == "__main__":
     print("Input")
     test_delta = np.array([[-1, 1, 2, 4], [5, -6, 7, 8], [3, -2, 1, 0], [1, -2, -3, 4]])
     print(test_delta)
-    
+
     backward_result = detector_layer.back_propagation(test_delta)
     print("Result")
     print(backward_result)
