@@ -109,7 +109,7 @@ class Convolution:
                 if (region.shape[0] == sizeH and region.shape[1] == sizeW):
                     yield region, i, j
 
-    def back_propagation(self, delta_matrix, learning_rate):
+    def back_propagation(self, delta_matrix):
         weight = np.zeros(delta_matrix.shape)
         h, w = weight.shape
 
@@ -130,9 +130,9 @@ class Convolution:
 
         return self.deltaweights
 
-    def updateWeight(self, learningrate):
+    def updateWeight(self, learning_rate):
         self.cache = False
-        self.deltaweights = (self.deltaweights / (self.batchsize * self.batchperepoch)) * learningrate
+        self.deltaweights = (self.deltaweights / (self.batchsize * self.batchperepoch)) * learning_rate
 
         print('convolution weight:')
         print(self.deltaweights)
