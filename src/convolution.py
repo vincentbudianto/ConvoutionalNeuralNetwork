@@ -18,7 +18,7 @@ class Convolution:
         if filters is None and image is not None:
             t, h, w = image.shape
             self.numFilters = t
-            self.filters = (np.random.randn(t, filterSizeH, filterSizeW) / (filterSizeH * filterSizeW)).astype('float64')
+            self.filters = ((np.random.randn(t, filterSizeH, filterSizeW) / (filterSizeH * filterSizeW)).astype('float64')) % 1
         elif filters is not None:
             self.filters = filters.astype('float64')
             self.numFilters = len(filters)
@@ -34,7 +34,7 @@ class Convolution:
         if image is not None:
             t, h, w = image.shape
             if self.filters is None:
-                self.filters = (np.random.randn(t, self.filterSizeH, self.filterSizeW) / (self.filterSizeH * self.filterSizeW)).astype('float64')
+                self.filters = ((np.random.randn(t, self.filterSizeH, self.filterSizeW) / (self.filterSizeH * self.filterSizeW)).astype('float64')) % 1
                 self.numFilters = t
 
     def getPadding(self):

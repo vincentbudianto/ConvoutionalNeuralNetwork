@@ -16,7 +16,7 @@ class OutputLayer:
 
     def initiateLayer(self):
         for _ in range(self.nodeCount):
-            currentNodeWeightMatrix = np.random.randn(self.flatlength) * 10
+            currentNodeWeightMatrix = (np.random.randn(self.flatlength) % 2) -1
             current_node = Dense(currentNodeWeightMatrix, activation_function="softmax")
             self.denseNodes.append(current_node)
 
