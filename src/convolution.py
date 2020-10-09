@@ -11,7 +11,7 @@ class Convolution:
         self.batchperepoch = batchperepoch
         self.cache = False
         self.deltafilters = None
-        self.prevfilters = np.zeros(self.filters.shape)
+        self.prevfilters = np.zeros((filterSizeH, filterSizeW))
 
         if image is not None:
             self.image = np.transpose(image,(2, 0, 1))
