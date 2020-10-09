@@ -69,8 +69,10 @@ class Network:
 
         for _ in range(epoch):
             total_true = 0
+            random.shuffle(train_data)
             for img in train_data:
-                result = self.train_one(img, label)
+                new_label = 1 if img.split('\\')[2].split('.')[0] == 'dog' else 0
+                result = self.train_one(img, new_label)
                 if result:
                     total_true += 1
                 print("TRAIN DONE :", img, "; Prediction:", result)
@@ -84,7 +86,7 @@ class Network:
         for subdir, dirs, files in os.walk(directory):
             for file in files:
                 if file.endswith('jpg'):
-                    images.append(file)
+                    images.append(os.path.join(subdir, file))
 
         datas = (np.array_split(images, epoch))
 
