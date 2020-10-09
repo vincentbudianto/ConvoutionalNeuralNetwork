@@ -66,7 +66,7 @@ class Network:
         self.output_layer.updateWeight(learning_rate, momentum)
         self.dense_layer.updateWeight(learning_rate, momentum)
         self.convolution_layer.updateWeight(learning_rate, momentum)
-    
+
     def predict(self, fileName):
         extractedImage = extractImage(fileName, True, self.convInputSize, self.convInputSize)
         extractedImage = np.transpose(extractedImage[0],(2, 0, 1))
@@ -78,50 +78,44 @@ class Network:
 
         prediction = 0 if self.output_layer.outputs[0] >= self.output_layer.outputs[1] else 1
         return prediction
-    
+
     def check_predict(self, fileName, label):
         prediction = self.predict(fileName)
         return [prediction == label, prediction]
 
     def train(self, directory, label, epoch, learning_rate, momentum, val_data, train_data):
-        
         all_true = 0
         datas = np.array_split(train_data, epoch)
-        
-        for i, data in enumerate(datas): 
-            print('Epoch ' + str(i + 1) + '/' + str(epoch))
-            print('Training')
+
+        for i, data in enumerate(datas):
             total_true = 0
             random.shuffle(train_data)
+
             for img in data:
                 new_label = 1 if img.split('\\')[2].split('.')[0] == 'dog' else 0
                 result = self.train_one(img, new_label)
                 if result[0]:
                     total_true += 1
                     all_true += 1
-                print("TRAIN DONE : ", img, "; Result:", result)
+                # print("TRAIN DONE : ", img, "; Result:", result)
 
             self.update_weight(learning_rate, momentum)
-            print("Training Accuracy:", total_true / len(data))
-            print()
-
-            print('Validating')
             total_true_validate = 0
             random.shuffle(val_data)
+
             for img in val_data:
                 new_label = 1 if img.split('\\')[2].split('.')[0] == 'dog' else 0
                 result = self.check_predict(img, new_label)
                 if result[0]:
                     total_true_validate += 1
-                print("VALIDATE DONE : ", img, "; Result:", result)
-            print("Validation Accuracy:", total_true_validate / len(val_data))
-            print()
+                # print("VALIDATE DONE : ", img, "; Result:", result)
+            print('Epoch ' + str(i + 1) + '/' + str(epoch) + ' | Training Accuracy: ' + str(total_true / len(data)) + ' | Validation Accuracy:' + str(total_true_validate / len(val_data)))
 
-        print("AKURALLLLL")
-        print(all_true / len(train_data))
+        print('Overall Accuracy:', all_true / len(train_data))
+        print()
         return(all_true / len(train_data))
 
-    
+
 
 def kfoldxvalidation(Network, directory, label, epoch, learning_rate, kfold, momentum):
     listimg = []
@@ -142,6 +136,7 @@ def kfoldxvalidation(Network, directory, label, epoch, learning_rate, kfold, mom
     #KFOLDLOOP
     KFOLDACC = []
     for countimg, img in enumerate(listimg):
+        print((countimg + 1), 'Fold')
 
         localNetwork = copy.copy(Network)
 
@@ -149,15 +144,16 @@ def kfoldxvalidation(Network, directory, label, epoch, learning_rate, kfold, mom
         datacopy.remove(img)
 
         flattened_datacopy = [y for x in datacopy for y in x]
-        
+
         accnow = localNetwork.train(directory, label, epoch, learning_rate, momentum, img, flattened_datacopy)
 
         savemodel(localNetwork, str(countimg))
 
         KFOLDACC.append([accnow, localNetwork])
-        
+
+    print('Accuracy list:')
     print(KFOLDACC)
-        
+
 def mass_predict(network, directory):
     images = []
     for subdir, dirs, files in os.walk(directory):
@@ -177,7 +173,7 @@ def mass_predict(network, directory):
     for img in images:
         new_label = 1 if img.split('\\')[2].split('.')[0] == 'dog' else 0
         result = network.check_predict(img, new_label)
-        print("Predicted", img, "; Result =", result)
+        # print("Predicted", img, "; Result =", result)
         if result[0]:
             count_true += 1
             if result[1]:
@@ -189,7 +185,7 @@ def mass_predict(network, directory):
                 dog_false += 1
             else:
                 cat_false += 1
-    
+
     print("Accuracy =", count_true / len(images))
     print("Confusion Matrix")
     print([[cat_true, cat_false], [dog_false, dog_true]])
