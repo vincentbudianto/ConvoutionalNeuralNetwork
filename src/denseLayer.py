@@ -67,7 +67,7 @@ class DenseLayer:
 
         self.cache = False
 
-        self.deltaweights = (self.deltaweights / (self.batchsize * self.batchperepoch)) * learningrate + ((momentum * self.previousweights) if self.previousweights != None else 0)
+        self.deltaweights = (self.deltaweights / (self.batchsize * self.batchperepoch)) * learningrate + ((momentum * self.previousweights) if self.previousweights is not None else 0)
 
         self.previousweights = self.deltaweights
 
