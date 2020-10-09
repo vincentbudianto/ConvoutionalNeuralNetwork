@@ -81,7 +81,7 @@ class Network:
     
     def check_predict(self, fileName, label):
         prediction = self.predict(fileName)
-        return prediction == label
+        return [prediction == label, prediction]
 
     def train(self, directory, label, epoch, learning_rate, momentum, val_data, train_data):
         
@@ -96,13 +96,13 @@ class Network:
             for img in data:
                 new_label = 1 if img.split('\\')[2].split('.')[0] == 'dog' else 0
                 result = self.train_one(img, new_label)
-                if result:
+                if result[0]:
                     total_true += 1
                     all_true += 1
                 print("TRAIN DONE : ", img, "; Result:", result)
 
             self.update_weight(learning_rate, momentum)
-            print("Accuracy:", total_true / len(train_data))
+            print("Training Accuracy:", total_true / len(data))
             print()
 
             print('Validating')
@@ -111,7 +111,7 @@ class Network:
             for img in val_data:
                 new_label = 1 if img.split('\\')[2].split('.')[0] == 'dog' else 0
                 result = self.check_predict(img, new_label)
-                if result:
+                if result[0]:
                     total_true_validate += 1
                 print("VALIDATE DONE : ", img, "; Result:", result)
             print("Validation Accuracy:", total_true_validate / len(val_data))
@@ -157,6 +157,42 @@ def kfoldxvalidation(Network, directory, label, epoch, learning_rate, kfold, mom
         KFOLDACC.append([accnow, localNetwork])
         
     print(KFOLDACC)
+        
+def mass_predict(network, directory):
+    images = []
+    for subdir, dirs, files in os.walk(directory):
+        for file in files:
+            if file.endswith('jpg'):
+                images.append(os.path.join(subdir, file))
+
+    random.shuffle(images)
+
+    dog_true = 0
+    dog_false = 0
+    cat_true = 0
+    cat_false = 0
+
+    count_true = 0
+
+    for img in images:
+        new_label = 1 if img.split('\\')[2].split('.')[0] == 'dog' else 0
+        result = network.check_predict(img, new_label)
+        print("Predicted", img, "; Result =", result)
+        if result[0]:
+            count_true += 1
+            if result[1]:
+                dog_true += 1
+            else:
+                cat_true += 1
+        else:
+            if result[1]:
+                dog_false += 1
+            else:
+                cat_false += 1
+    
+    print("Accuracy =", count_true / len(images))
+    print("Confusion Matrix")
+    print([[cat_true, cat_false], [dog_false, dog_true]])
 
 
 def savemodel(network, iteration):
