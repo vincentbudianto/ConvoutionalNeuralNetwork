@@ -68,30 +68,20 @@ class Network:
 
     def train(self, directory, label, epoch, learning_rate, val_data, train_data):
         for i in range(epoch):
+            print('epoch ' + str(i) + '/' + str(epoch))
             total_true = 0
             random.shuffle(train_data)
-            imglist = train_data
 
-            for j in range(self.batchperepoch):
-                data = []
+            for img in train_data:
+                result = self.train_one(img, label)
 
-                for _ in range(self.batchsize):
-                    if (len(imglist) > 0):
-                        data.append(imglist.pop(0))
+                if result:
+                    total_true += 1
 
-                print('epoch ' + str(i) + '/' + str(epoch) + ' : batch ' + str(j) + '/' + str(self.batchperepoch))
-
-                for img in data:
-                    result = self.train_one(img, label)
-
-                    if result:
-                        total_true += 1
-
-                    print("TRAIN DONE :", img)
+                print("TRAIN DONE : ", img)
 
             self.update_weight(learning_rate)
-            # print("Accuracy:", total_true / len(train_data))
-            print("Accuracy:", total_true / (self.batchperepoch * self.batchsize))
+            print("Accuracy:", total_true / len(train_data))
 
     def kfoldxvalidation(self, directory, label, epoch, learning_rate):
         listimg = []
