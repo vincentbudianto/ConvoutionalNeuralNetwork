@@ -15,6 +15,7 @@ class DenseLayer:
         self.batchsize = batchsize
         self.batchperepoch = batchperepoch
         self.activation_function = activation_function
+        self.previousweights = None
 
     def initiateLayer(self):
         for _ in range(self.nodeCount):
@@ -62,12 +63,13 @@ class DenseLayer:
         return phase2
 
 
-    def updateWeight(self, learningrate):
+    def updateWeight(self, learningrate, momentum):
 
         self.cache = False
 
-        self.deltaweights = (self.deltaweights / (self.batchsize * self.batchperepoch)) * learningrate
+        self.deltaweights = (self.deltaweights / (self.batchsize * self.batchperepoch)) * learningrate + ((momentum * self.previousweights) if self.previousweights != None else 0)
 
+        self.previousweights = self.deltaweights
 
         for i, node in enumerate(self.denseNodes):
             node.updateWeight(self.deltaweights[i])

@@ -62,37 +62,66 @@ class Network:
 
         return [prediction == label, prediction]
 
-    def update_weight(self, learning_rate):
+    def update_weight(self, learning_rate, momentum):
         self.output_layer.updateWeight(learning_rate)
         self.dense_layer.updateWeight(learning_rate)
-        self.convolution_layer.updateWeight(learning_rate)
+        self.convolution_layer.updateWeight(learning_rate, momentum)
+    
+    def predict(self, fileName):
+        extractedImage = extractImage(fileName, True, self.convInputSize, self.convInputSize)
+        extractedImage = np.transpose(extractedImage[0],(2, 0, 1))
+        self.convolution_layer.setInputs(np.array(extractedImage))
+        self.convolution_layer.convolutionForward()
+        flatArray = self.flattening_layer.flatten(self.convolution_layer.outputs)
+        self.dense_layer.executeDenseLayer(flatArray)
+        self.output_layer.executeDenseLayer(self.dense_layer.outputs)
 
-    def train(self, directory, label, epoch, learning_rate, val_data, train_data):
+        prediction = 0 if self.output_layer.outputs[0] >= self.output_layer.outputs[1] else 1
+        return prediction
+    
+    def check_predict(self, fileName, label):
+        prediction = self.predict(fileName)
+        return prediction == label
+
+    def train(self, directory, label, epoch, learning_rate, momentum, val_data, train_data):
         
         all_true = 0
         datas = np.array_split(train_data, epoch)
-
-        for i, data in enumerate(datas):
-
-            print('epoch ' + str(i) + '/' + str(epoch))
+        
+        for i, data in enumerate(datas): 
+            print('Epoch ' + str(i + 1) + '/' + str(epoch))
+            print('Training')
             total_true = 0
-
+            random.shuffle(train_data)
             for img in data:
-                new_label = 1 if (img.split('\\')[2].split('.')[0] == 'dog') else 0
+                new_label = 1 if img.split('\\')[2].split('.')[0] == 'dog' else 0
                 result = self.train_one(img, new_label)
-                if result[0]:
+                if result:
                     total_true += 1
                     all_true += 1
-                print("TRAIN DONE : ", img, " : PREDICT : ", ("cat" if (result[1] == 0) else "dog"))
+                print("TRAIN DONE : ", img, "; Result:", result)
 
-            self.update_weight(learning_rate)
-            print("dense weight")
-            print(self.dense_layer.getweight())
-            print("Accuracy:", total_true / len(data))
+            self.update_weight(learning_rate, momentum)
+            print("Accuracy:", total_true / len(train_data))
+            print()
+
+            print('Validating')
+            total_true_validate = 0
+            random.shuffle(val_data)
+            for img in val_data:
+                new_label = 1 if img.split('\\')[2].split('.')[0] == 'dog' else 0
+                result = self.check_predict(img, new_label)
+                if result:
+                    total_true_validate += 1
+                print("VALIDATE DONE : ", img, "; Result:", result)
+            print("Validation Accuracy:", total_true_validate / len(val_data))
+            print()
 
         print("AKURALLLLL")
         print(all_true / len(train_data))
         return(all_true / len(train_data))
+
+    
 
 def kfoldxvalidation(Network, directory, label, epoch, learning_rate, kfold):
     listimg = []
