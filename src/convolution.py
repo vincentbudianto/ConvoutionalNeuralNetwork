@@ -11,6 +11,7 @@ class Convolution:
         self.batchperepoch = batchperepoch
         self.cache = False
         self.deltafilters = None
+        self.prevfilters = np.zeros(self.filters.shape)
 
         if image is not None:
             self.image = np.transpose(image,(2, 0, 1))
@@ -105,7 +106,6 @@ class Convolution:
         filters = np.zeros(self.filters.shape)
 
         for k in range(len(self.output)):
-            filter_channel = np.zeros(self.filters[k].shape)
             paddingLayer = self.output[k]
 
             for curr_region, i, j in self.Extract(paddingLayer):
@@ -119,8 +119,9 @@ class Convolution:
 
         return self.deltafilters
 
-    def updateFilters(self, learning_rate):
+    def updateFilters(self, learning_rate, momentum):
         self.cache = False
-        self.filters -= ((self.deltafilters / (self.batchsize * self.batchperepoch)) * learning_rate)
+        self.filters -= (((self.deltafilters / (self.batchsize * self.batchperepoch)) * learning_rate) + (self.prevfilters * momentum))
+        self.prevfilters = (self.deltafilters / (self.batchsize * self.batchperepoch))
 
         return self.filters

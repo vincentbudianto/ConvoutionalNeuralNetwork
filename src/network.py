@@ -19,7 +19,8 @@ class Network:
         self.convInputSize = None
 
     def initiate_network(self, batchsize, batchperepoch, convInputSize, convFilterCount, convFilterSize, convPaddingSize, convStrideSize, detectorMode, poolFilterSize, poolStrideSize, poolMode, activation_dense="relu"):
-
+        self.batchsize = batchsize
+        self.batchperepoch = batchperepoch
         self.convInputSize = convInputSize
 
         self.convolution_layer = ConvolutionLayer()
@@ -60,14 +61,14 @@ class Network:
 
         return prediction == label
 
-    def update_weight(self, learning_rate):
+    def update_weight(self, learning_rate, momentum):
         self.output_layer.updateWeight(learning_rate)
         self.dense_layer.updateWeight(learning_rate)
-        self.convolution_layer.updateWeight(learning_rate)
+        self.convolution_layer.updateWeight(learning_rate, momentum)
 
-    def train(self, directory, label, epoch, learning_rate, val_data, train_data):
-
-        for _ in range(epoch):
+    def train(self, directory, label, epoch, learning_rate, momentum, val_data, train_data):
+        for i in range(epoch):
+            print('epoch ' + str(i) + '/' + str(epoch))
             total_true = 0
             random.shuffle(train_data)
             for img in train_data:
@@ -75,11 +76,13 @@ class Network:
                 result = self.train_one(img, new_label)
                 if result:
                     total_true += 1
-                print("TRAIN DONE :", img, "; Prediction:", result)
-            self.update_weight(learning_rate)
-            print("Epoch done; Accuracy:", total_true / len(train_data))
 
-    def kfoldxvalidation(self, directory, label, epoch, learning_rate):
+                print("TRAIN DONE : ", img)
+
+            self.update_weight(learning_rate, momentum)
+            print("Accuracy:", total_true / len(train_data))
+
+    def kfoldxvalidation(self, directory, label, epoch, learning_rate, momentum):
         listimg = []
         images = []
 
@@ -88,7 +91,7 @@ class Network:
                 if file.endswith('jpg'):
                     images.append(os.path.join(subdir, file))
 
-        datas = (np.array_split(images, epoch))
+        datas = np.array_split(images, epoch)
 
         for img in datas:
             listimg.append(list(img))
@@ -100,7 +103,7 @@ class Network:
 
             flattened_datacopy = [y for x in datacopy for y in x]
 
-            self.train(directory, label, epoch, learning_rate, img, flattened_datacopy)
+            self.train(directory, label, epoch, learning_rate, momentum, img, flattened_datacopy)
 
 if __name__ == '__main__':
     curNetwork = Network()
