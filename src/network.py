@@ -61,12 +61,12 @@ class Network:
 
         return prediction == label
 
-    def update_weight(self, learning_rate):
+    def update_weight(self, learning_rate, momentum):
         self.output_layer.updateWeight(learning_rate)
         self.dense_layer.updateWeight(learning_rate)
-        self.convolution_layer.updateWeight(learning_rate)
+        self.convolution_layer.updateWeight(learning_rate, momentum)
 
-    def train(self, directory, label, epoch, learning_rate, val_data, train_data):
+    def train(self, directory, label, epoch, learning_rate, momentum, val_data, train_data):
         for i in range(epoch):
             print('epoch ' + str(i) + '/' + str(epoch))
             total_true = 0
@@ -74,17 +74,17 @@ class Network:
 
             for img in train_data:
                 new_label = 1 if (img.split('\\')[2].split('.')[0] == 'dog') else 0
-                result = self.train_one(img, label)
+                result = self.train_one(img, new_label)
 
                 if result:
                     total_true += 1
 
                 print("TRAIN DONE : ", img)
 
-            self.update_weight(learning_rate)
+            self.update_weight(learning_rate, momentum)
             print("Accuracy:", total_true / len(train_data))
 
-    def kfoldxvalidation(self, directory, label, epoch, learning_rate):
+    def kfoldxvalidation(self, directory, label, epoch, learning_rate, momentum):
         listimg = []
         images = []
 
@@ -105,7 +105,7 @@ class Network:
 
             flattened_datacopy = [y for x in datacopy for y in x]
 
-            self.train(directory, label, epoch, learning_rate, img, flattened_datacopy)
+            self.train(directory, label, epoch, learning_rate, momentum, img, flattened_datacopy)
 
 if __name__ == '__main__':
     curNetwork = Network()
