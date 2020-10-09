@@ -63,8 +63,8 @@ class Network:
         return [prediction == label, prediction]
 
     def update_weight(self, learning_rate, momentum):
-        self.output_layer.updateWeight(learning_rate)
-        self.dense_layer.updateWeight(learning_rate)
+        self.output_layer.updateWeight(learning_rate, momentum)
+        self.dense_layer.updateWeight(learning_rate, momentum)
         self.convolution_layer.updateWeight(learning_rate, momentum)
     
     def predict(self, fileName):
