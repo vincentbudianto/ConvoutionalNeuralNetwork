@@ -123,7 +123,7 @@ class Network:
 
     
 
-def kfoldxvalidation(Network, directory, label, epoch, learning_rate, kfold):
+def kfoldxvalidation(Network, directory, label, epoch, learning_rate, kfold, momentum):
     listimg = []
     images = []
 
@@ -149,8 +149,8 @@ def kfoldxvalidation(Network, directory, label, epoch, learning_rate, kfold):
         datacopy.remove(img)
 
         flattened_datacopy = [y for x in datacopy for y in x]
-
-        accnow = localNetwork.train(directory, label, epoch, learning_rate, img, flattened_datacopy)
+        
+        accnow = localNetwork.train(directory, label, epoch, learning_rate, momentum, img, flattened_datacopy)
 
         savemodel(localNetwork, str(countimg))
 
