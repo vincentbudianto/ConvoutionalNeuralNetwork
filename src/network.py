@@ -73,6 +73,7 @@ class Network:
             random.shuffle(train_data)
 
             for img in train_data:
+                new_label = 1 if (img.split('\\')[2].split('.')[0] == 'dog') else 0
                 result = self.train_one(img, label)
 
                 if result:
@@ -90,7 +91,7 @@ class Network:
         for subdir, dirs, files in os.walk(directory):
             for file in files:
                 if file.endswith('jpg'):
-                    images.append(os.path.join.(subdir, file))
+                    images.append(os.path.join(subdir, file))
 
         datas = np.array_split(images, epoch)
 
